@@ -4,8 +4,7 @@ from Board import Board
 
 def test_board_constructor():
     Board()
-    Board(hole_count=2, size=4, shape="triangle")
-    Board(hole_count=3, size=5, shape="diamond")
+    Board(hole_count=2, size=5, shape="triangle")
 
 
 def test_board_constructor_exceptions():
@@ -21,3 +20,14 @@ def test_board_constructor_exceptions():
     for shape in shapes:
         with pytest.raises(ValueError):
             Board(shape=shape)
+
+    with pytest.raises(ValueError):
+        Board(shape="triangle", size=5, hole_positions=[(4, 2)])
+
+
+# def test_board_movable_pieces():
+#     assert sorted(
+#         Board(
+#             hole_count=1, size=4, shape="diamond", hole_positions=[(1, 1)]
+#         ).get_movable_pieces()
+#     ) == sorted([(1, 3), (3, 1)])
