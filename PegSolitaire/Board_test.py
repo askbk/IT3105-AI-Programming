@@ -34,3 +34,9 @@ def test_get_movable_pieces():
             hole_count=1, size=4, shape="diamond", hole_positions=[(1, 1)]
         ).get_movable_pieces()
     ) == sorted([(1, 3), (3, 1)])
+
+    assert sorted(
+        Board(
+            hole_count=1, size=4, shape="triangle", hole_positions=[(1, 2), (2, 1)]
+        ).get_movable_pieces()
+    ) == sorted([(0, 1), (1, 0)])
