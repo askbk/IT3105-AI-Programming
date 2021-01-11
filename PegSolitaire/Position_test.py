@@ -28,3 +28,16 @@ def test_position_is_on_same_diagonal():
     assert a.is_on_same_diagonal(Position(2, 0))
     assert a.is_on_same_diagonal(Position(0, 2))
     assert not a.is_on_same_diagonal(Position(1, 2))
+
+
+def test_position_straight_distance():
+    a = Position(1, 1)
+    assert a.straight_distance(Position(2, 0)) == 1
+    assert a.straight_distance(Position(1, 0)) == 1
+    assert a.straight_distance(Position(1, 5)) == 4
+    assert a.straight_distance(Position(5, 1)) == 4
+
+
+def test_position_straight_distance_exceptions():
+    with pytest.raises(ValueError):
+        Position(1, 1).straight_distance(Position(0, 0))

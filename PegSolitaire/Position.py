@@ -10,20 +10,32 @@ class Position:
         self._row = row
         self._col = col
 
-    def is_on_same_row(self, other):
+    def is_on_same_row(self, other) -> bool:
         """
         Determines if this position is on the same Board row as other.
         """
         return self._row == other._row
 
-    def is_on_same_column(self, other):
+    def is_on_same_column(self, other) -> bool:
         """
         Determines if this position is on the same Board column as other.
         """
         return self._col == other._col
 
-    def is_on_same_diagonal(self, other):
+    def is_on_same_diagonal(self, other) -> bool:
         """
         Determines if this position is on the same Board diagonal as other.
         """
         return self._row + self._col == other._row + other._col
+
+    def straight_distance(self, other):
+        """
+        Calculates the distance to other, assuming it is on the same row, column or diagonal.
+        """
+        if self.is_on_same_column(other) or self.is_on_same_row(other):
+            return abs(self._row - other._row) + abs(self._col - other._col)
+
+        if not self.is_on_same_diagonal(other):
+            raise ValueError("there is no straight line between the positions")
+
+        return abs(self._row - other._row)
