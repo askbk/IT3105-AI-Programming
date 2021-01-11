@@ -1,5 +1,6 @@
 from typing import List, Tuple, TYPE_CHECKING
-from itertools import product, accumulate
+from itertools import product, accumulate, chain
+from functools import reduce
 from Position import Position
 
 
@@ -84,5 +85,21 @@ class Board:
 
         return self._is_position_occupied(piece.get_middle_position(hole))
 
-    def get_possible_moves(self):
-        pass
+    def get_possible_moves(self) -> List[Tuple[Position]]:
+        """
+        Get currently possible moves.
+        """
+        return list(
+            chain.from_iterable(
+                map(
+                    lambda position: reduce(
+                        lambda moves, hole: moves + [(position, hole)]
+                        if self._can_move_to_hole(position, hole)
+                        else moves,
+                        self._hole_positions,
+                        list(),
+                    ),
+                    self._get_all_valid_positions(),
+                )
+            )
+        )
