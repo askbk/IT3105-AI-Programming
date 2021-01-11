@@ -21,3 +21,9 @@ class Position:
         Determines if this position is on the same Board column as other.
         """
         return self._col == other._col
+
+    def is_on_same_diagonal(self, other):
+        """
+        Determines if this position is on the same Board diagonal as other.
+        """
+        return self._row + self._col == other._row + other._col

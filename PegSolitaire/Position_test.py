@@ -21,3 +21,10 @@ def test_position_is_on_same_column():
     a = Position(0, 0)
     assert a.is_on_same_column(Position(1, 0))
     assert not a.is_on_same_column(Position(0, 1))
+
+
+def test_position_is_on_same_diagonal():
+    a = Position(1, 1)
+    assert a.is_on_same_diagonal(Position(2, 0))
+    assert a.is_on_same_diagonal(Position(0, 2))
+    assert not a.is_on_same_diagonal(Position(1, 2))
