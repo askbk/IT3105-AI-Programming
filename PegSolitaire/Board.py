@@ -84,20 +84,5 @@ class Board:
 
         return self._is_position_occupied(piece.get_middle_position(hole))
 
-    def get_movable_pieces(self) -> List[Position]:
-        """
-        Get currently movable pieces as a list of tuples of their positions.
-        """
-        return list(
-            filter(
-                lambda position: any(
-                    map(
-                        lambda hole_position: self._can_move_to_hole(
-                            position, hole_position
-                        ),
-                        self._hole_positions,
-                    )
-                ),
-                self._get_all_valid_positions(),
-            )
-        )
+    def get_possible_moves(self):
+        pass

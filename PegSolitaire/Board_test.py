@@ -31,18 +31,29 @@ def test_board_constructor_exceptions():
         Board(shape="triangle", size=5, hole_positions=[Position((4, 2))])
 
     with pytest.raises(ValueError):
-        Board(shape="triangle", size=5, hole_positions=[Position((1, 1)), Position((1, 1))])
+        Board(
+            shape="triangle",
+            size=5,
+            hole_positions=[Position((1, 1)), Position((1, 1))],
+        )
 
 
-def test_get_movable_pieces():
+def test_get_possible_moves():
     assert sorted(
         Board(
             hole_count=1, size=4, shape="diamond", hole_positions=[Position((1, 1))]
-        ).get_movable_pieces()
-    ) == sorted([Position((1, 3)), Position((3, 1))])
+        ).get_possible_moves()
+    ) == sorted(
+        [(Position((1, 3)), Position((1, 1))), (Position((3, 1)), Position((1, 1)))]
+    )
 
     assert sorted(
         Board(
-            hole_count=1, size=4, shape="triangle", hole_positions=[Position((1, 2)), Position((2, 1))]
-        ).get_movable_pieces()
-    ) == sorted([Position((0, 1)), Position((1, 0))])
+            hole_count=1,
+            size=4,
+            shape="triangle",
+            hole_positions=[Position((1, 2)), Position((2, 1))],
+        ).get_possible_moves()
+    ) == sorted(
+        [(Position((0, 1)), Position((2, 1))), (Position((1, 0)), Position((1, 2)))]
+    )
