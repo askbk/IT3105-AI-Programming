@@ -1,5 +1,6 @@
 import pytest
 from Position import Position
+from Board import Board
 
 
 def test_position_constructor():
@@ -9,6 +10,11 @@ def test_position_constructor():
 def test_position_constructor_exceptions():
     with pytest.raises(ValueError):
         Position((-1, -1))
+
+
+def test_position_get_coordinates():
+    assert Position((0, 0)).get_coordinates() == (0, 0)
+    assert Position((4, 1)).get_coordinates() == (4, 1)
 
 
 def test_position_is_on_same_row():

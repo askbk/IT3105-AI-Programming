@@ -53,5 +53,11 @@ class Position:
 
         return Position((row, col))
 
+    def get_coordinates(self):
+        return tuple((self._row, self._col))
+
     def __eq__(self, other):
         return self._row == other._row and self._col == other._col
+
+    def __hash__(self):
+        return hash((self._row, self._col))
