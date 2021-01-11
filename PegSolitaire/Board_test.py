@@ -1,10 +1,16 @@
 import pytest
 from Board import Board
+from Position import Position
 
 
 def test_board_constructor():
     Board()
-    Board(hole_count=2, size=5, shape="triangle", hole_positions=[(1, 2), (1, 3)])
+    Board(
+        hole_count=2,
+        size=5,
+        shape="triangle",
+        hole_positions=[Position((1, 2)), Position((1, 3))],
+    )
 
 
 def test_board_constructor_exceptions():
@@ -22,21 +28,21 @@ def test_board_constructor_exceptions():
             Board(shape=shape)
 
     with pytest.raises(ValueError):
-        Board(shape="triangle", size=5, hole_positions=[(4, 2)])
+        Board(shape="triangle", size=5, hole_positions=[Position((4, 2))])
 
     with pytest.raises(ValueError):
-        Board(shape="triangle", size=5, hole_positions=[(1, 1), (1, 1)])
+        Board(shape="triangle", size=5, hole_positions=[Position((1, 1)), Position((1, 1))])
 
 
 def test_get_movable_pieces():
     assert sorted(
         Board(
-            hole_count=1, size=4, shape="diamond", hole_positions=[(1, 1)]
+            hole_count=1, size=4, shape="diamond", hole_positions=[Position((1, 1))]
         ).get_movable_pieces()
-    ) == sorted([(1, 3), (3, 1)])
+    ) == sorted([Position((1, 3)), Position((3, 1))])
 
     assert sorted(
         Board(
-            hole_count=1, size=4, shape="triangle", hole_positions=[(1, 2), (2, 1)]
+            hole_count=1, size=4, shape="triangle", hole_positions=[Position((1, 2)), Position((2, 1))]
         ).get_movable_pieces()
-    ) == sorted([(0, 1), (1, 0)])
+    ) == sorted([Position((0, 1)), Position((1, 0))])

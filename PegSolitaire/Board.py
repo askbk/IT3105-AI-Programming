@@ -1,11 +1,12 @@
 from typing import List, Tuple, TYPE_CHECKING
 from itertools import product, accumulate
-
-Position = Tuple[int]
+from Position import Position
 
 
 class Board:
-    def __init__(self, hole_count=1, size=4, shape="diamond", hole_positions=[(1, 1)]):
+    def __init__(
+        self, hole_count=1, size=4, shape="diamond", hole_positions=[Position((1, 1))]
+    ):
         if hole_count < 1:
             raise ValueError("hole_count must be at least 1")
         if size < 4:
@@ -38,7 +39,7 @@ class Board:
         """
         Determines whether a position is valid for a given board shape and size.
         """
-        row, col = position
+        row, col = position.get_coordinates()
         if not 0 <= row < board_size:
             return False
         if not 0 <= col < board_size:
@@ -47,13 +48,6 @@ class Board:
             return False
 
         return True
-
-    @staticmethod
-    def _get_positions_delta(position_a: Position, position_b: Position) -> Tuple[int]:
-        """
-        Calculates delta between two positions.
-        """
-        return (position_a[0] - position_b[0], position_a[1] - position_b[1])
 
     def _is_position_occupied(self, position: Position) -> bool:
         """
@@ -70,67 +64,25 @@ class Board:
                 lambda position: Board._position_is_valid(
                     self._shape, self._size, position
                 ),
-                product(range(self._size), range(self._size)),
+                map(Position, product(range(self._size), range(self._size))),
             )
         )
 
-    def _are_on_same_row(self, position_a: Position, position_b: Position) -> bool:
-        return position_a[0] == position_b[0]
-
-    def _are_on_same_column(self, position_a: Position, position_b: Position) -> bool:
-        return position_a[1] == position_b[1]
-
-    def _are_on_same_diagonal(self, position_a: Position, position_b: Position) -> bool:
-        return position_a[0] + position_a[1] == position_b[0] + position_b[1]
-
-    def _straight_distance(self, position_a: Position, position_b: Position):
-        """
-        Calculates the distance between two positions on same row, column or diagonal.
-        """
-        if self._are_on_same_column(position_a, position_b) or self._are_on_same_row(
-            position_a, position_b
-        ):
-            return abs(position_a[0] - position_b[0]) + abs(
-                position_a[1] - position_b[1]
-            )
-
-        if not self._are_on_same_diagonal(position_a, position_b):
-            raise ValueError("there is no straight line between the positions")
-
-        return abs(position_a[0] - position_b[0])
-
-    def _is_piece_between_positions(
-        self, position_a: Position, position_b: Position
-    ) -> bool:
-        """
-        Determine if the middle between two positions is occupied.
-        """
-        delta = Board._get_positions_delta(position_a, position_b)
-
-        position_to_check = (
-            position_b[0] + delta[0] // 2,
-            position_b[1] + delta[1] // 2,
-        )
-
-        return self._is_position_occupied(position_to_check)
-
-    def _can_move_to_hole(
-        self, piece_position: Position, hole_position: Position
-    ) -> bool:
+    def _can_move_to_hole(self, piece: Position, hole: Position) -> bool:
         """
         Determines whether a piece can move into a given hole.
         """
         if not (
-            self._are_on_same_column(piece_position, hole_position)
-            or self._are_on_same_row(piece_position, hole_position)
-            or self._are_on_same_diagonal(piece_position, hole_position)
+            piece.is_on_same_column(hole)
+            or piece.is_on_same_row(hole)
+            or piece.is_on_same_diagonal(hole)
         ):
             return False
 
-        if not self._straight_distance(piece_position, hole_position) == 2:
+        if not piece.straight_distance(hole) == 2:
             return False
 
-        return self._is_piece_between_positions(piece_position, hole_position)
+        return self._is_position_occupied(piece.get_middle_position(hole))
 
     def get_movable_pieces(self) -> List[Position]:
         """

@@ -61,3 +61,18 @@ class Position:
 
     def __hash__(self):
         return hash((self._row, self._col))
+
+    def __lt__(self, other):
+        if self._row < other._row:
+            return True
+
+        if self._row == other._row and self._col < other._col:
+            return True
+
+        return False
+
+    def __repr__(self):
+        try:
+            return f"Position(({self._row}, {self._col}))"
+        except:
+            return "Position()"
