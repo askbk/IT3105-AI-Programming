@@ -39,3 +39,18 @@ class Position:
             raise ValueError("there is no straight line between the positions")
 
         return abs(self._row - other._row)
+
+    def get_middle_position(self, other):
+        """
+        Finds the position between this and other.
+        """
+        if self.straight_distance(other) != 2:
+            raise ValueError
+
+        row = self._row + (other._row - self._row) // 2
+        col = self._col + (other._col - self._col) // 2
+
+        return Position(row, col)
+
+    def __eq__(self, other):
+        return self._row == other._row and self._col == other._col

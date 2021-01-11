@@ -41,3 +41,22 @@ def test_position_straight_distance():
 def test_position_straight_distance_exceptions():
     with pytest.raises(ValueError):
         Position(1, 1).straight_distance(Position(0, 0))
+
+
+def test_position_get_middle_position():
+    a = Position(0, 0)
+    assert a.get_middle_position(Position(2, 0)) == Position(1, 0)
+
+    b = Position(2, 0)
+    assert b.get_middle_position(Position(0, 2)) == Position(1, 1)
+
+
+def test_position_get_middle_position_exceptions():
+    with pytest.raises(ValueError):
+        Position(0, 0).get_middle_position(Position(1, 0))
+
+    with pytest.raises(ValueError):
+        Position(0, 0).get_middle_position(Position(1, 1))
+
+    with pytest.raises(ValueError):
+        Position(0, 0).get_middle_position(Position(2, 1))
