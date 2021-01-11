@@ -27,6 +27,9 @@ class Board:
         self._size = size
         self._shape = shape
         self._hole_positions = hole_positions
+        self._occupied_positions = list(
+            set(self._get_all_valid_positions()) - set(self._hole_positions)
+        )
 
     @staticmethod
     def _position_is_valid(
@@ -44,6 +47,19 @@ class Board:
             return False
 
         return True
+
+    @staticmethod
+    def _get_positions_delta(position_a: Position, position_b: Position) -> Tuple[int]:
+        """
+        Calculates delta between two positions.
+        """
+        return (position_a[0] - position_b[0], position_a[1] - position_b[1])
+
+    def _is_position_occupied(self, position: Position) -> bool:
+        """
+        Determines if a position is occupied by a piece.
+        """
+        return position in self._occupied_positions
 
     def _get_all_valid_positions(self) -> List[Position]:
         """
@@ -67,7 +83,10 @@ class Board:
     def _are_on_same_diagonal(self, position_a: Position, position_b: Position) -> bool:
         return position_a[0] + position_a[1] == position_b[0] + position_b[1]
 
-    def _straight_distance(self, position_a, position_b):
+    def _straight_distance(self, position_a: Position, position_b: Position):
+        """
+        Calculates the distance between two positions on same row, column or diagonal.
+        """
         if self._are_on_same_column(position_a, position_b) or self._are_on_same_row(
             position_a, position_b
         ):
@@ -79,6 +98,21 @@ class Board:
             raise ValueError("there is no straight line between the positions")
 
         return abs(position_a[0] - position_b[0])
+
+    def _is_piece_between_positions(
+        self, position_a: Position, position_b: Position
+    ) -> bool:
+        """
+        Determine if the middle between two positions is occupied.
+        """
+        delta = Board._get_positions_delta(position_a, position_b)
+
+        position_to_check = (
+            position_b[0] + delta[0] // 2,
+            position_b[1] + delta[1] // 2,
+        )
+
+        return self._is_position_occupied(position_to_check)
 
     def _can_move_to_hole(
         self, piece_position: Position, hole_position: Position
@@ -93,12 +127,10 @@ class Board:
         ):
             return False
 
-        result = self._straight_distance(piece_position, hole_position) == 2
+        if not self._straight_distance(piece_position, hole_position) == 2:
+            return False
 
-        if result:
-            print(piece_position, "can move to", hole_position)
-
-        return result
+        return self._is_piece_between_positions(piece_position, hole_position)
 
     def get_movable_pieces(self) -> List[Position]:
         """
