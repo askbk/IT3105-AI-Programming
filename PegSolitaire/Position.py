@@ -3,7 +3,8 @@ class Position:
     Represents a position on a Board.
     """
 
-    def __init__(self, row, col):
+    def __init__(self, row_col):
+        row, col = row_col
         if row < 0 or col < 0:
             raise ValueError
 
@@ -50,7 +51,7 @@ class Position:
         row = self._row + (other._row - self._row) // 2
         col = self._col + (other._col - self._col) // 2
 
-        return Position(row, col)
+        return Position((row, col))
 
     def __eq__(self, other):
         return self._row == other._row and self._col == other._col
