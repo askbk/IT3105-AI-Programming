@@ -8,9 +8,16 @@ class Position:
             raise ValueError
 
         self._row = row
+        self._col = col
 
     def is_on_same_row(self, other):
         """
         Determines if this position is on the same Board row as other.
         """
         return self._row == other._row
+
+    def is_on_same_column(self, other):
+        """
+        Determines if this position is on the same Board column as other.
+        """
+        return self._col == other._col
