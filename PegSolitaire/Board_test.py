@@ -30,6 +30,12 @@ def test_board_constructor_exceptions():
         Board(shape="triangle", size=5, hole_positions=[Position((4, 2))])
 
     with pytest.raises(ValueError):
+        Board(size=5, hole_positions=[Position((6, 0))])
+
+    with pytest.raises(ValueError):
+        Board(size=5, hole_positions=[Position((0, 6))])
+
+    with pytest.raises(ValueError):
         Board(
             shape="triangle",
             size=5,
@@ -79,6 +85,9 @@ def test_make_move_exceptions():
 
     with pytest.raises(ValueError):
         Board().make_move((Position((0, 0)), Position((0, -1))))
+
+    with pytest.raises(ValueError):
+        Board(size=5).make_move((Position((6, 0)), Position((8, 0))))
 
     with pytest.raises(ValueError):
         Board(size=4, shape="triangle").make_move((Position((3, 0)), Position((3, 2))))
