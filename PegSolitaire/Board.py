@@ -12,11 +12,11 @@ class Board:
         hole_positions=[Position((1, 1))],
     ):
         if len(hole_positions) < 1:
-            raise ValueError("hole_count must be at least 1")
+            raise ValueError("hole_count must be at least 1.")
         if size < 4:
-            raise ValueError("size must be at least 4")
+            raise ValueError("size must be at least 4.")
         if shape != "triangle" and shape != "diamond":
-            raise ValueError("shape must be either 'triangle' or 'diamond'")
+            raise ValueError("shape must be either 'triangle' or 'diamond'.")
 
         if any(
             map(
@@ -24,10 +24,10 @@ class Board:
                 hole_positions,
             )
         ):
-            raise ValueError("one or more invalid hole positions")
+            raise ValueError("One or more invalid positions given in hole_positions.")
 
         if len(set(hole_positions)) != len(hole_positions):
-            raise ValueError("one or more duplicate hole positions")
+            raise ValueError("One or more duplicate positions in hole_positions.")
 
         self._size = size
         self._shape = shape

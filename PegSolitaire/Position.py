@@ -10,7 +10,7 @@ class Position:
     def __init__(self, row_col: Tuple[int]):
         row, col = row_col
         if row < 0 or col < 0:
-            raise ValueError
+            raise ValueError("Row and column must be non-negative integers.")
 
         self._row = row
         self._col = col
@@ -41,7 +41,7 @@ class Position:
             return abs(self._row - other._row) + abs(self._col - other._col)
 
         if not self.is_on_same_diagonal(other):
-            raise ValueError("there is no straight line between the positions")
+            raise ValueError(f"There is no straight line between {self} and {other}.")
 
         return abs(self._row - other._row)
 
@@ -50,7 +50,7 @@ class Position:
         Finds the position between this and other.
         """
         if self.straight_distance(other) != 2:
-            raise ValueError
+            raise ValueError(f"Distance between {self} and {other} must be 2.")
 
         row = self._row + (other._row - self._row) // 2
         col = self._col + (other._col - self._col) // 2
