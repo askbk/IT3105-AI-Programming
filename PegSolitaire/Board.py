@@ -1,4 +1,4 @@
-from typing import List, Tuple, TYPE_CHECKING
+from typing import List, Tuple, Set
 from itertools import product, accumulate, chain
 from functools import reduce
 from Position import Position
@@ -31,7 +31,7 @@ class Board:
 
         self._size = size
         self._shape = shape
-        self._hole_positions = hole_positions
+        self._hole_positions = set(hole_positions)
 
     @staticmethod
     def _position_is_valid(
@@ -50,17 +50,17 @@ class Board:
 
         return True
 
-    def _get_occupied_positions(self) -> List[Position]:
+    def _get_occupied_positions(self) -> Set[Position]:
         """
         Returns list of occupied positions.
         """
-        return list(set(self._get_all_valid_positions()) - set(self._get_holes()))
+        return self._get_all_valid_positions() - self._get_holes()
 
-    def _get_holes(self) -> List[Position]:
+    def _get_holes(self) -> Set[Position]:
         """
         Returns list of holes.
         """
-        return list(self._hole_positions)
+        return set(self._hole_positions)
 
     def _is_position_occupied(self, position: Position) -> bool:
         """
@@ -68,11 +68,11 @@ class Board:
         """
         return position in self._get_occupied_positions()
 
-    def _get_all_valid_positions(self) -> List[Position]:
+    def _get_all_valid_positions(self) -> Set[Position]:
         """
         Returns a list of all valid positions on the game board.
         """
-        return list(
+        return set(
             filter(
                 lambda position: Board._position_is_valid(
                     self._shape, self._size, position
@@ -105,11 +105,11 @@ class Board:
             chain.from_iterable(
                 map(
                     lambda position: reduce(
-                        lambda moves, hole: moves + [(position, hole)]
+                        lambda moves, hole: moves | set([(position, hole)])
                         if self._can_move_to_hole(position, hole)
                         else moves,
                         self._get_holes(),
-                        list(),
+                        set(),
                     ),
                     self._get_all_valid_positions(),
                 )
@@ -122,10 +122,12 @@ class Board:
         """
         from_position, to_position = move
 
-        new_hole_positions = list(set(self._get_holes()) - set([to_position])) + [
-            from_position.get_middle_position(to_position),
-            from_position,
-        ]
+        new_hole_positions = (self._get_holes() - set([to_position])) | set(
+            [
+                from_position.get_middle_position(to_position),
+                from_position,
+            ]
+        )
 
         return Board(
             size=self._size,
