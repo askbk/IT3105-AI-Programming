@@ -6,7 +6,6 @@ from Position import Position
 def test_board_constructor():
     Board()
     Board(
-        hole_count=2,
         size=5,
         shape="triangle",
         hole_positions=[Position((1, 2)), Position((1, 3))],
@@ -41,7 +40,7 @@ def test_board_constructor_exceptions():
 def test_get_possible_moves():
     assert sorted(
         Board(
-            hole_count=1, size=4, shape="diamond", hole_positions=[Position((1, 1))]
+            size=4, shape="diamond", hole_positions=[Position((1, 1))]
         ).get_possible_moves()
     ) == sorted(
         [(Position((1, 3)), Position((1, 1))), (Position((3, 1)), Position((1, 1)))]
@@ -49,7 +48,6 @@ def test_get_possible_moves():
 
     assert sorted(
         Board(
-            hole_count=1,
             size=4,
             shape="triangle",
             hole_positions=[Position((1, 2)), Position((2, 1))],
@@ -61,7 +59,7 @@ def test_get_possible_moves():
 
 def test_make_move():
     assert sorted(
-        Board(hole_count=1, size=4, shape="diamond", hole_positions=[Position((1, 1))])
+        Board(size=4, shape="diamond", hole_positions=[Position((1, 1))])
         .make_move((Position((1, 3)), Position((1, 1))))
         .get_possible_moves()
     ) == sorted(

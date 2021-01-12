@@ -7,7 +7,6 @@ from Position import Position
 class Board:
     def __init__(
         self,
-        hole_count=1,
         size=4,
         shape="diamond",
         hole_positions=[Position((1, 1))],
@@ -129,7 +128,6 @@ class Board:
         ]
 
         return Board(
-            hole_count=1,
             size=self._size,
             shape=self._shape,
             hole_positions=new_hole_positions,
