@@ -154,7 +154,6 @@ class Board:
         if not self.is_game_finished():
             raise RuntimeError("Cannot calculate score until game is finished")
 
-        print(self._get_occupied_positions())
         return len(self._get_occupied_positions())
 
     def get_edge_list(self) -> List[Tuple[Position]]:
