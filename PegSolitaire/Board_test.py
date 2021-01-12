@@ -69,6 +69,7 @@ def test_make_move():
             (Position((1, 0)), Position((1, 2))),
             (Position((3, 0)), Position((1, 2))),
             (Position((3, 1)), Position((1, 3))),
+            (Position((3, 2)), Position((1, 2))),
             (Position((3, 3)), Position((1, 3))),
         ]
     )
