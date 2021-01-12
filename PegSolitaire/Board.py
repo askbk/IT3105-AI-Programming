@@ -13,8 +13,8 @@ class Board:
     ):
         if len(hole_positions) < 1:
             raise ValueError("hole_count must be at least 1.")
-        if size < 4:
-            raise ValueError("size must be at least 4.")
+        if size < 3:
+            raise ValueError("size must be at least 3.")
         if shape != "triangle" and shape != "diamond":
             raise ValueError("shape must be either 'triangle' or 'diamond'.")
 
@@ -156,3 +156,27 @@ class Board:
 
         print(self._get_occupied_positions())
         return len(self._get_occupied_positions())
+
+    def get_edge_list(self) -> List[Tuple[Position]]:
+        """
+        Returns the board as an edge list.
+        """
+
+        def is_valid_edge(edge: Tuple[Position]) -> bool:
+            position_a, position_b = edge
+
+            if position_a == position_b:
+                return False
+
+            if position_b < position_a:
+                return False
+
+            try:
+                return position_a.straight_distance(position_b) == 1
+            except:
+                return False
+
+        return filter(
+            is_valid_edge,
+            product(self._get_all_valid_positions(), self._get_all_valid_positions()),
+        )
