@@ -140,3 +140,9 @@ class Board:
             shape=self._shape,
             hole_positions=new_hole_positions,
         )
+
+    def is_game_finished(self):
+        """
+        Determines whether the game is finished, in essence if any further moves are possible.
+        """
+        return len(self.get_possible_moves()) == 0

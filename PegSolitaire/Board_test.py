@@ -82,3 +82,22 @@ def test_make_move_exceptions():
 
     with pytest.raises(ValueError):
         Board(size=4, shape="triangle").make_move((Position((3, 0)), Position((3, 2))))
+
+
+def test_is_game_finished():
+    assert not Board().is_game_finished()
+    assert Board(
+        size=4,
+        shape="triangle",
+        hole_positions=[
+            Position((0, 0)),
+            Position((0, 1)),
+            Position((0, 2)),
+            Position((0, 3)),
+            Position((1, 0)),
+            Position((1, 1)),
+            Position((1, 2)),
+            Position((2, 0)),
+            Position((2, 1)),
+        ],
+    ).is_game_finished()
