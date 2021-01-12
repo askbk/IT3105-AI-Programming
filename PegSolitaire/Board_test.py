@@ -16,7 +16,7 @@ def test_board_constructor_exceptions():
     with pytest.raises(ValueError):
         Board(hole_positions=[])
 
-    sizes = range(0, 4)
+    sizes = range(0, 3)
     for size in sizes:
         with pytest.raises(ValueError):
             Board(size=size)
@@ -136,3 +136,23 @@ def test_get_game_score():
 def test_get_game_score_exceptions():
     with pytest.raises(RuntimeError):
         Board().get_game_score()
+
+
+def test_get_edge_list():
+    assert sorted(
+        Board(
+            size=3, shape="triangle", hole_positions=[Position((0, 0))]
+        ).get_edge_list()
+    ) == sorted(
+        [
+            (Position((0, 0)), Position((1, 0))),
+            (Position((0, 0)), Position((0, 1))),
+            (Position((1, 0)), Position((0, 1))),
+            (Position((1, 0)), Position((1, 1))),
+            (Position((1, 0)), Position((2, 0))),
+            (Position((2, 0)), Position((1, 1))),
+            (Position((0, 1)), Position((0, 2))),
+            (Position((0, 1)), Position((1, 1))),
+            (Position((1, 1)), Position((0, 2))),
+        ]
+    )
