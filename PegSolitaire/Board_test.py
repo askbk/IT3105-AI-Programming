@@ -15,7 +15,7 @@ def test_board_constructor():
 
 def test_board_constructor_exceptions():
     with pytest.raises(ValueError):
-        Board(hole_count=0)
+        Board(hole_positions=[])
 
     sizes = range(0, 4)
     for size in sizes:
@@ -56,4 +56,19 @@ def test_get_possible_moves():
         ).get_possible_moves()
     ) == sorted(
         [(Position((0, 1)), Position((2, 1))), (Position((1, 0)), Position((1, 2)))]
+    )
+
+
+def test_make_move():
+    assert sorted(
+        Board(hole_count=1, size=4, shape="diamond", hole_positions=[Position((1, 1))])
+        .make_move((Position((1, 3)), Position((1, 1))))
+        .get_possible_moves()
+    ) == sorted(
+        [
+            (Position((1, 0)), Position((1, 2))),
+            (Position((3, 0)), Position((1, 2))),
+            (Position((3, 1)), Position((1, 3))),
+            (Position((3, 3)), Position((1, 3))),
+        ]
     )
