@@ -6,9 +6,13 @@ from Position import Position
 
 class Board:
     def __init__(
-        self, hole_count=1, size=4, shape="diamond", hole_positions=[Position((1, 1))]
+        self,
+        hole_count=1,
+        size=4,
+        shape="diamond",
+        hole_positions=[Position((1, 1))],
     ):
-        if hole_count < 1:
+        if len(hole_positions) < 1:
             raise ValueError("hole_count must be at least 1")
         if size < 4:
             raise ValueError("size must be at least 4")
@@ -29,9 +33,6 @@ class Board:
         self._size = size
         self._shape = shape
         self._hole_positions = hole_positions
-        self._occupied_positions = list(
-            set(self._get_all_valid_positions()) - set(self._hole_positions)
-        )
 
     @staticmethod
     def _position_is_valid(
@@ -50,11 +51,23 @@ class Board:
 
         return True
 
+    def _get_occupied_positions(self) -> List[Position]:
+        """
+        Returns list of occupied positions.
+        """
+        return list(set(self._get_all_valid_positions()) - set(self._get_holes()))
+
+    def _get_holes(self) -> List[Position]:
+        """
+        Returns list of holes.
+        """
+        return list(self._hole_positions)
+
     def _is_position_occupied(self, position: Position) -> bool:
         """
         Determines if a position is occupied by a piece.
         """
-        return position in self._occupied_positions
+        return position in self._get_occupied_positions()
 
     def _get_all_valid_positions(self) -> List[Position]:
         """
@@ -96,10 +109,28 @@ class Board:
                         lambda moves, hole: moves + [(position, hole)]
                         if self._can_move_to_hole(position, hole)
                         else moves,
-                        self._hole_positions,
+                        self._get_holes(),
                         list(),
                     ),
                     self._get_all_valid_positions(),
                 )
             )
+        )
+
+    def make_move(self, move: Tuple[Position]):
+        """
+        Returns a new Board where the given move has been made.
+        """
+        from_position, to_position = move
+
+        new_hole_positions = list(set(self._get_holes()) - set([to_position])) + [
+            from_position.get_middle_position(to_position),
+            from_position,
+        ]
+
+        return Board(
+            hole_count=1,
+            size=self._size,
+            shape=self._shape,
+            hole_positions=new_hole_positions,
         )
