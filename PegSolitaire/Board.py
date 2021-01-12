@@ -20,7 +20,7 @@ class Board:
 
         if any(
             map(
-                lambda position: not Board._position_is_valid(shape, size, position),
+                lambda position: not Board._is_position_valid(shape, size, position),
                 hole_positions,
             )
         ):
@@ -34,7 +34,7 @@ class Board:
         self._hole_positions = set(hole_positions)
 
     @staticmethod
-    def _position_is_valid(
+    def _is_position_valid(
         board_shape: str, board_size: int, position: Position
     ) -> bool:
         """
@@ -74,7 +74,7 @@ class Board:
         """
         return set(
             filter(
-                lambda position: Board._position_is_valid(
+                lambda position: Board._is_position_valid(
                     self._shape, self._size, position
                 ),
                 map(Position, product(range(self._size), range(self._size))),
@@ -121,6 +121,12 @@ class Board:
         Returns a new Board where the given move has been made.
         """
         from_position, to_position = move
+
+        if not Board._is_position_valid(self._shape, self._size, from_position):
+            raise ValueError(f"Invalid board position: {from_position}")
+
+        if not Board._is_position_valid(self._shape, self._size, to_position):
+            raise ValueError(f"Invalid board position: {to_position}")
 
         new_hole_positions = (self._get_holes() - set([to_position])) | set(
             [

@@ -71,3 +71,14 @@ def test_make_move():
             (Position((3, 3)), Position((1, 3))),
         ]
     )
+
+
+def test_make_move_exceptions():
+    with pytest.raises(ValueError):
+        Board().make_move((Position((0, 0)), Position((1, 1))))
+
+    with pytest.raises(ValueError):
+        Board().make_move((Position((0, 0)), Position((0, -1))))
+
+    with pytest.raises(ValueError):
+        Board(size=4, shape="triangle").make_move((Position((3, 0)), Position((3, 2))))
