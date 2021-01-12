@@ -101,3 +101,29 @@ def test_is_game_finished():
             Position((2, 1)),
         ],
     ).is_game_finished()
+
+
+def test_get_game_score():
+    assert (
+        Board(
+            size=4,
+            shape="triangle",
+            hole_positions=[
+                Position((0, 0)),
+                Position((0, 1)),
+                Position((0, 2)),
+                Position((0, 3)),
+                Position((1, 0)),
+                Position((1, 1)),
+                Position((1, 2)),
+                Position((2, 0)),
+                Position((2, 1)),
+            ],
+        ).get_game_score()
+        == 1
+    )
+
+
+def test_get_game_score_exceptions():
+    with pytest.raises(RuntimeError):
+        Board().get_game_score()

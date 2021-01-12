@@ -45,7 +45,7 @@ class Board:
             return False
         if not 0 <= col < board_size:
             return False
-        if board_shape == "triangle" and not row + col <= board_size:
+        if board_shape == "triangle" and not row + col < board_size:
             return False
 
         return True
@@ -146,3 +146,13 @@ class Board:
         Determines whether the game is finished, in essence if any further moves are possible.
         """
         return len(self.get_possible_moves()) == 0
+
+    def get_game_score(self):
+        """
+        Scores the game when it is finished.
+        """
+        if not self.is_game_finished():
+            raise RuntimeError("Cannot calculate score until game is finished")
+
+        print(self._get_occupied_positions())
+        return len(self._get_occupied_positions())
