@@ -156,3 +156,16 @@ def test_get_edge_list():
             (Position((0, 2)), Position((1, 1))),
         ],
     )
+
+
+def test_get_all_positions():
+    assert sorted(Board(size=3, shape="triangle").get_all_positions()) == sorted(
+        [
+            Position((0, 0)),
+            Position((0, 1)),
+            Position((0, 2)),
+            Position((1, 0)),
+            Position((1, 1)),
+            Position((2, 0)),
+        ]
+    )

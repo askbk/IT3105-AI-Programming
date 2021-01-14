@@ -179,3 +179,9 @@ class Board:
             is_valid_edge,
             product(self._get_all_valid_positions(), self._get_all_valid_positions()),
         )
+
+    def get_all_positions(self) -> List[Position]:
+        """
+        Returns a list of all board positions.
+        """
+        return self._get_all_valid_positions()
