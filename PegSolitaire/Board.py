@@ -180,8 +180,14 @@ class Board:
             product(self._get_all_valid_positions(), self._get_all_valid_positions()),
         )
 
-    def get_all_positions(self) -> List[Position]:
+    def get_all_holes(self) -> List[Position]:
         """
-        Returns a list of all board positions.
+        Returns a list of all hole positions.
         """
-        return self._get_all_valid_positions()
+        return list(self._get_holes())
+
+    def get_all_pieces(self) -> List[Position]:
+        """
+        Returns a list of all piece positions.
+        """
+        return list(self._get_occupied_positions())
