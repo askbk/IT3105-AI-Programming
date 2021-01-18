@@ -86,7 +86,7 @@ class BoardDisplay:
         BoardDisplay._draw_nodes(graph, node_positions, [to_position], 500, "red")
 
     @staticmethod
-    def display_board_with_move(board: Board, move: Tuple[Position]):
+    def _display_board_with_move(board: Board, move: Tuple[Position]):
         """
         Displays a board state while emphasising the previous move.
         """
@@ -103,12 +103,49 @@ class BoardDisplay:
 
         plt.draw()
         plt.axis("off")
-        plt.savefig(fname="board.png")
+
+    @staticmethod
+    def display_board_move_sequence(
+        boards: List[Board], moves: List[Tuple[Position]], pause=1
+    ):
+        """
+        Displays a sequence of board moves.
+        """
+        for board, move in zip(boards, moves):
+            plt.figure(1)
+            plt.clf()
+            BoardDisplay._display_board_with_move(board, move)
+            plt.pause(pause)
 
 
-BoardDisplay.display_board_with_move(
-    Board(
-        size=5, shape="triangle", hole_positions=[Position((1, 2)), Position((1, 3))]
-    ),
-    (Position((1, 3)), Position((1, 1))),
-)
+if __name__ == "__main__":
+    boards = [
+        Board(
+            size=5,
+            shape="triangle",
+            hole_positions=[Position((1, 2)), Position((1, 3))],
+        ),
+        Board(
+            size=5,
+            shape="triangle",
+            hole_positions=[Position((3, 0)), Position((1, 3)), Position((2, 1))],
+        ),
+        Board(
+            size=5,
+            shape="triangle",
+            hole_positions=[
+                Position((1, 3)),
+                Position((2, 1)),
+                Position((1, 0)),
+                Position((2, 0)),
+            ],
+        ),
+    ]
+
+    moves = [
+        (Position((1, 3)), Position((1, 1))),
+        (Position((3, 0)), Position((1, 2))),
+        (Position((1, 0)), Position((3, 0))),
+    ]
+
+    BoardDisplay.display_board_move_sequence(boards, moves, pause=2)
