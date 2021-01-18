@@ -26,28 +26,40 @@ def test_get_temporal_difference_error():
     assert float(td_error) == td_error
 
 
-def test_update_value_function():
+def test_update():
+    state_action1 = (0, 1)
+    state_action2 = (1, -1)
+
     critic = Critic(
+        critic_function="table",
         learning_rate=0.1,
         discount_factor=0.9,
-        eligibility_decay_rate=1,
+        eligibility_decay_rate=0.9,
+        value_function={state_action1: 0.1, state_action2: -0.1},
+        eligibilities={state_action1: 0.09, state_action2: 1},
     )
-    initial_state_action = (0, 1)
-    second_state_action = (1, 1)
-    td_error = critic.get_temporal_difference_error(
-        initial_state_action, second_state_action, 1
+
+    td_error = critic.get_temporal_difference_error(state_action2, state_action1, 0)
+
+    updated_critic = critic.update(
+        state_action2, [state_action1, state_action2], td_error
     )
-    updated_critic = critic.update_value_function(initial_state_action, td_error)
-    print(updated_critic._value_function)
+
     assert (
-        updated_critic.get_temporal_difference_error(
-            initial_state_action, second_state_action, 1
+        round(
+            updated_critic.get_temporal_difference_error(
+                state_action1, state_action2, 1
+            ),
+            5,
         )
-        < td_error
+        == 0.82539
     )
-
-
-def test_update_eligibility():
-    critic = Critic(init_state=0, init_action=1)
-
-    updated_critic = critic.update_eligibility((0, 1))
+    assert (
+        round(
+            updated_critic.get_temporal_difference_error(
+                state_action2, state_action1, 0
+            ),
+            6,
+        )
+        == 0.172539
+    )
