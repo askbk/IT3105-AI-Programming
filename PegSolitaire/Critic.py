@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Tuple
 
 
 class Critic:
@@ -50,33 +51,39 @@ class Critic:
             value_function=value_function,
         )
 
-    def _get_value(self, state, action):
+    def _get_value(self, state_action: Tuple):
         """
         Get the value for the state-action pair.
         """
         try:
-            return self._value_function[(state, action)]
+            return self._value_function[state_action]
         except KeyError:
             return 0
 
-    def get_temporal_difference_error(self, state, action, reward):
+    def get_temporal_difference_error(
+        self, old_state_action: Tuple, new_state_action: Tuple, reward: float
+    ):
         """
         Calculates the temporal difference error.
         """
         return (
             reward
-            + self._discount_factor * self._get_value(state, action)
-            - self._get_value(state, action)
+            + self._discount_factor * self._get_value(new_state_action)
+            - self._get_value(old_state_action)
         )
 
-    def update_value_function(self, state, action, td_error):
+    def update_value_function(self, old_state_action: Tuple, td_error: float):
         """
         Returns a new instance of the Critic with an updated value function.
         """
-        old_value = self._get_value(state, action)
+        old_value = self._get_value(old_state_action)
         new_value = old_value + self._learning_rate * td_error
-        new_value_function = dict(self._value_function)
+        new_value_function = {**self._value_function, old_state_action: new_value}
 
-        return Critic()._from_value_function(
-            self, {**new_value_function, (state, action): new_value}
-        )
+        return Critic()._from_value_function(self, new_value_function)
+
+    def update_eligibility(self, state_action):
+        """
+        Returns a new instance of the Critic with updated eligibility for the state-action pair.
+        """
+        pass

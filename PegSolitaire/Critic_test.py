@@ -22,12 +22,32 @@ def test_constructor_exceptions():
 
 
 def test_get_temporal_difference_error():
-    td_error = Critic().get_temporal_difference_error(0, 1, 1)
+    td_error = Critic().get_temporal_difference_error((0, 1), (1, 1), 1)
     assert float(td_error) == td_error
 
 
 def test_update_value_function():
-    critic = Critic()
-    td_error = critic.get_temporal_difference_error(0, 1, 1)
-    updated_critic = critic.update_value_function(0, 1, td_error)
-    assert updated_critic.get_temporal_difference_error(0, 1, 1) < td_error
+    critic = Critic(
+        learning_rate=0.1,
+        discount_factor=0.9,
+        eligibility_decay_rate=1,
+    )
+    initial_state_action = (0, 1)
+    second_state_action = (1, 1)
+    td_error = critic.get_temporal_difference_error(
+        initial_state_action, second_state_action, 1
+    )
+    updated_critic = critic.update_value_function(initial_state_action, td_error)
+    print(updated_critic._value_function)
+    assert (
+        updated_critic.get_temporal_difference_error(
+            initial_state_action, second_state_action, 1
+        )
+        < td_error
+    )
+
+
+def test_update_eligibility():
+    critic = Critic(init_state=0, init_action=1)
+
+    updated_critic = critic.update_eligibility((0, 1))
