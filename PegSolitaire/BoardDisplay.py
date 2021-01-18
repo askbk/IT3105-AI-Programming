@@ -42,12 +42,16 @@ class BoardDisplay:
         return dict(zip(board_positions, rotated))
 
     @staticmethod
-    def _draw_holes(graph, node_positions, holes):
+    def _draw_nodes(graph, node_positions, nodes, node_size, node_color):
         """
-        Draws the holes on the board.
+        Draw the nodes of the board.
         """
         draw_networkx_nodes(
-            graph, pos=node_positions, nodelist=holes, node_size=75, node_color="black"
+            graph,
+            pos=node_positions,
+            nodelist=nodes,
+            node_size=node_size,
+            node_color=node_color,
         )
 
     @staticmethod
@@ -58,13 +62,18 @@ class BoardDisplay:
         draw_networkx_edges(graph, pos=node_positions)
 
     @staticmethod
+    def _draw_holes(graph, node_positions, holes):
+        """
+        Draws the holes on the board.
+        """
+        BoardDisplay._draw_nodes(graph, node_positions, holes, 75, "black")
+
+    @staticmethod
     def _draw_pieces(graph, node_positions, pieces):
         """
         Draws the game pieces on the board.
         """
-        draw_networkx_nodes(
-            graph, pos=node_positions, nodelist=pieces, node_color="blue"
-        )
+        BoardDisplay._draw_nodes(graph, node_positions, pieces, 300, "blue")
 
     @staticmethod
     def _draw_move(graph, node_positions, move: Tuple[Position]):
@@ -73,20 +82,8 @@ class BoardDisplay:
         """
         from_position, to_position = move
 
-        draw_networkx_nodes(
-            graph,
-            pos=node_positions,
-            nodelist=[from_position],
-            node_color="red",
-            node_size=75,
-        )
-        draw_networkx_nodes(
-            graph,
-            pos=node_positions,
-            nodelist=[to_position],
-            node_color="red",
-            node_size=500,
-        )
+        BoardDisplay._draw_nodes(graph, node_positions, [from_position], 75, "red")
+        BoardDisplay._draw_nodes(graph, node_positions, [to_position], 500, "red")
 
     @staticmethod
     def display_board_with_move(board: Board, move: Tuple[Position]):
