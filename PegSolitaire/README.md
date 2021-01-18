@@ -12,3 +12,13 @@ For more details on coverage reporting, please see the [pytest-cov documentation
 ## Architecture
 
 The `Board` class and the `Position` class implement all necessary game logic.
+
+## ACMAgent
+
+### Public interface
+
+**ACMAgent**(actor_discount_factor=0.9, actor_eligibility_decay_rate=0.9,actor_learning_rate=0.01, critic_function="table", critic_nn_dimensions=None, critic_learning_rate=0.9, critic_eligibility_decay_rate=0.9, critic_discount_factor=0.9, initial_epsilon=0.05, epsilon_decay_rate=0.9)
+Returns a new Agent instance.
+
+**choose_action**(state, possible_actions, reward)
+Gives reward for current state and returns next action to take.

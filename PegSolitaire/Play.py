@@ -11,7 +11,7 @@ def main():
 
     while not boards[-1].is_game_finished():
         possible_actions = boards[-1].get_possible_moves()
-        moves.append(agent.choose_action(possible_actions))
+        moves.append(agent.choose_action(boards[-1], possible_actions))
         boards.append(boards[-1].make_move(moves[-1]))
 
     print("Final score:", boards[-1].get_game_score())

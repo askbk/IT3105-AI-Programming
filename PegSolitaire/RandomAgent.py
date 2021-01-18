@@ -6,5 +6,5 @@ class RandomAgent:
     An agent that acts randomly.
     """
 
-    def choose_action(self, action_list):
-        return random.choice(action_list)
+    def choose_action(self, state, possible_actions, reward=0):
+        return random.choice(possible_actions)
