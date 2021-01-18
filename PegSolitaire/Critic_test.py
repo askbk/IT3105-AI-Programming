@@ -7,9 +7,9 @@ def test_constructor():
     Critic(
         critic_function="table",
         critic_nn_dimensions=None,
-        critic_learning_rate=0.9,
-        critic_eligibility_decay_rate=0.9,
-        critic_discount_factor=0.9,
+        learning_rate=0.9,
+        eligibility_decay_rate=0.9,
+        discount_factor=0.9,
     )
 
 
@@ -19,3 +19,15 @@ def test_constructor_exceptions():
 
     with pytest.raises(ValueError):
         Critic(critic_function="neural_network")
+
+
+def test_get_temporal_difference_error():
+    td_error = Critic().get_temporal_difference_error(0, 1, 1)
+    assert float(td_error) == td_error
+
+
+def test_update_value_function():
+    critic = Critic()
+    td_error = critic.get_temporal_difference_error(0, 1, 1)
+    updated_critic = critic.update_value_function(0, 1, td_error)
+    assert updated_critic.get_temporal_difference_error(0, 1, 1) < td_error
