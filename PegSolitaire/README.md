@@ -46,8 +46,8 @@ Returns a new Actor instance with updated eligibility for the state-action pair.
 **Critic**(critic_function="table", critic_nn_dimensions=None,critic_learning_rate=0.9, critic_eligibility_decay_rate=0.9,critic_discount_factor=0.9, value_function=None, eligibilities=None)
 Constructor.
 
-**get_temporal_difference_error**(old_state_action, new_state_action, reward)
+**get_temporal_difference_error**(old_state, new_state, reward)
 Calculates the temporal difference error.
 
-**update**(old_state_action, state_actions, temporal_difference_error)
+**update**(old_state, states, temporal_difference_error)
 Returns a new Critic instance with an updated value function.

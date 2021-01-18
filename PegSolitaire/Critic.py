@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple, List, Dict
+from typing import Tuple, List, Dict, Any
 
 
 class Critic:
@@ -46,8 +46,8 @@ class Critic:
     @staticmethod
     def _from_old_parameters(
         old: Critic,
-        value_function: Dict[Tuple, float],
-        eligibilities: Dict[Tuple, float],
+        value_function: Dict[Any, float],
+        eligibilities: Dict[Any, float],
     ):
         """
         Creates a new Critic instance with the same parameters as old, but with a new value function.
@@ -62,61 +62,61 @@ class Critic:
             eligibilities=eligibilities,
         )
 
-    def _get_value(self, state_action: Tuple):
+    def _get_value(self, state: Any):
         """
-        Get the value for the state-action pair.
+        Get the value for the state.
         """
         try:
-            return self._value_function[state_action]
+            return self._value_function[state]
         except KeyError:
             return 0
 
     def get_temporal_difference_error(
-        self, old_state_action: Tuple, new_state_action: Tuple, reward: float
+        self, old_state: Any, new_state: Any, reward: float
     ):
         """
         Calculates the temporal difference error.
         """
         return (
             reward
-            + self._discount_factor * self._get_value(new_state_action)
-            - self._get_value(old_state_action)
+            + self._discount_factor * self._get_value(new_state)
+            - self._get_value(old_state)
         )
 
-    def _get_eligibility(self, state_action: Tuple, was_previous=False):
+    def _get_eligibility(self, state: Any, was_previous=False):
         """
-        Get eligibility of a state-action pair.
+        Get eligibility of a state.
         """
         if was_previous:
             return 1
 
         try:
-            return self._eligibilities[state_action]
+            return self._eligibilities[state]
         except KeyError:
             return 0
 
-    def update(self, old_state_action, state_actions: List[Tuple], td_error: float):
+    def update(self, old_state: Any, states: List, td_error: float):
         """
         Returns a new instance of the Critic with updated value function and eligibilities.
         """
         new_value_function = {
             **self._value_function,
             **{
-                state_action: self._get_value(state_action)
-                + self._learning_rate * td_error * self._get_eligibility(state_action)
-                for state_action in state_actions
+                state: self._get_value(state)
+                + self._learning_rate
+                * td_error
+                * self._get_eligibility(state, was_previous=(state == old_state))
+                for state in states
             },
         }
 
         new_eligibilities = {
             **self._eligibilities,
             **{
-                state_action: self._discount_factor
+                state: self._discount_factor
                 * self._eligibility_decay_rate
-                * self._get_eligibility(
-                    state_action, was_previous=(state_action == old_state_action)
-                )
-                for state_action in state_actions
+                * self._get_eligibility(state, was_previous=(state == old_state))
+                for state in states
             },
         }
 
