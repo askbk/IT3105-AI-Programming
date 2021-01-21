@@ -6,7 +6,7 @@ The model implements two different versions of the Critic: One is a simple table
 ## Testing
 
 Unit tests may be run with `pytest`.
-To produce a more detailed coverage report, `pytest --cov --cov-report: term`
+To produce a more detailed coverage report, `pytest --cov --cov-report term-missing`
 For more details on coverage reporting, please see the [pytest-cov documentation](https://pytest-cov.readthedocs.io/en/latest/reporting.html).
 
 ## Architecture
