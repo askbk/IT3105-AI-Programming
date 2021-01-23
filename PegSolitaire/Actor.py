@@ -1,4 +1,5 @@
 from __future__ import annotations
+import random
 from functools import reduce
 from itertools import product
 
@@ -43,7 +44,7 @@ class Actor:
             discount_factor=old._discount_factor,
             eligibility_decay_rate=old._eligibility_decay_rate,
             learning_rate=old._learning_rate,
-            initial_epsilon=old._epsilon,
+            initial_epsilon=old._epsilon * old._epsilon_decay_rate,
             epsilon_decay_rate=old._epsilon_decay_rate,
             _eligibilities=eligibilities,
             _policy=policy,
@@ -76,10 +77,15 @@ class Actor:
             possible_actions,
         )
 
-        return reduce(
+        best_action = reduce(
             lambda best, current: best if best[1] > current[1] else current,
             action_values,
         )[0]
+
+        if random.random() < self._epsilon:
+            return random.choice(possible_actions)
+
+        return best_action
 
     def update(self, state_actions, td_error):
         """
