@@ -14,8 +14,8 @@ class Critic:
         learning_rate=0.9,
         eligibility_decay_rate=0.9,
         discount_factor=0.9,
-        value_function=None,
-        eligibilities=None,
+        _value_function=None,
+        _eligibilities=None,
     ):
         if critic_function not in ["table", "neural_network"]:
             raise ValueError(
@@ -27,15 +27,15 @@ class Critic:
                 "Dimensions of neural network must be supplied when critic_function='neural_network'."
             )
 
-        if value_function is None:
+        if _value_function is None:
             self._value_function = dict()
         else:
-            self._value_function = value_function
+            self._value_function = _value_function
 
-        if eligibilities is None:
+        if _eligibilities is None:
             self._eligibilities = dict()
         else:
-            self._eligibilities = eligibilities
+            self._eligibilities = _eligibilities
 
         self._learning_rate = learning_rate
         self._critic_function = critic_function
@@ -58,8 +58,8 @@ class Critic:
             learning_rate=old._learning_rate,
             eligibility_decay_rate=old._eligibility_decay_rate,
             discount_factor=old._discount_factor,
-            value_function=value_function,
-            eligibilities=eligibilities,
+            _value_function=value_function,
+            _eligibilities=eligibilities,
         )
 
     def _get_value(self, state: Any):
