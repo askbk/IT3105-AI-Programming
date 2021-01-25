@@ -1,5 +1,7 @@
 import random
 from typing import List
+from Actor import Actor
+from Critic import Critic
 
 
 class ACMAgent:
@@ -20,10 +22,59 @@ class ACMAgent:
         initial_epsilon=0.05,
         epsilon_decay_rate=0.9,
     ):
-        pass
+        self._actor = Actor(
+            discount_factor=actor_discount_factor,
+            eligibility_decay_rate=actor_eligibility_decay_rate,
+            learning_rate=actor_learning_rate,
+            initial_epsilon=initial_epsilon,
+            epsilon_decay_rate=epsilon_decay_rate,
+        )
+        self._critic = Critic(
+            critic_function="table",
+            learning_rate=critic_learning_rate,
+            eligibility_decay_rate=critic_eligibility_decay_rate,
+            discount_factor=critic_discount_factor,
+        )
+        self._prev_action = None
+        self._state_action_pairs = list()
+
+    def _get_all_episode_state_action_pairs(self):
+        return self._state_action_pairs
+
+    def _get_all_episode_states(self):
+        return map(
+            lambda state_action: state_action[0],
+            self._get_all_episode_state_action_pairs(),
+        )
+
+    def _get_previous_state(self):
+        return self._state_action_pairs[-1][0]
+
+    def _store_state_action_pair(self, state, action):
+        self._state_action_pairs.append((state, action))
+        self._prev_action = action
 
     def choose_action(self, state, possible_actions: List, reward=0):
         """
         Choose next action to perform.
         """
-        return random.choice(possible_actions)
+        if self._prev_action is None:
+            action = self._actor.get_action(state, possible_actions)
+            self._store_state_action_pair(state, action)
+            return action
+
+        action = self._actor.get_action(state, possible_actions)
+        delta = self._critic.get_temporal_difference_error(
+            self._get_previous_state(), state, reward
+        )
+
+        self._critic = self._critic.update(
+            self._get_previous_state(), self._get_all_episode_states(), delta
+        )
+        self._actor = self._actor.update(
+            self._get_all_episode_state_action_pairs(), delta
+        )
+
+        self._store_state_action_pair(state, action)
+
+        return action
