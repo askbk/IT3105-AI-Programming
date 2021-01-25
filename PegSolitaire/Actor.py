@@ -46,11 +46,24 @@ class Actor:
             discount_factor=old._discount_factor,
             eligibility_decay_rate=old._eligibility_decay_rate,
             learning_rate=old._learning_rate,
-            initial_epsilon=old._epsilon * old._epsilon_decay_rate,
+            initial_epsilon=old._epsilon,
             epsilon_decay_rate=old._epsilon_decay_rate,
             use_random_values=old._use_random_values,
             _eligibilities=eligibilities,
             _policy=policy,
+        )
+
+    @staticmethod
+    def _new(old: Actor, eligibilities):
+        return Actor(
+            discount_factor=old._discount_factor,
+            eligibility_decay_rate=old._eligibility_decay_rate,
+            learning_rate=old._learning_rate,
+            initial_epsilon=old._epsilon * old._epsilon_decay_rate,
+            epsilon_decay_rate=old._epsilon_decay_rate,
+            use_random_values=old._use_random_values,
+            _eligibilities=eligibilities,
+            _policy=old._policy,
         )
 
     def _get_eligibility(self, state_action, was_previous):
@@ -125,12 +138,11 @@ class Actor:
 
         return Actor._update(self, new_policy, new_eligibilities)
 
-    def reset_eligibilities(self):
+    def reset_eligibilities_and_decay_epsilon(self):
         """
-        Returns a new instance of the Actor with reset eligibilities.
+        Returns a new instance of the Actor with reset eligibilities and decayed epsilon.
         """
-        return Actor._update(
+        return Actor._new(
             self,
-            policy=self._policy,
             eligibilities=dict.fromkeys(self._eligibilities, 0),
         )

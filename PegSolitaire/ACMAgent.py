@@ -92,6 +92,6 @@ class ACMAgent:
         """
         self._run_updates(state, reward)
         self._critic = self._critic.reset_eligibilities()
-        self._actor = self._actor.reset_eligibilities()
+        self._actor = self._actor.reset_eligibilities_and_decay_epsilon()
         self._state_action_pairs = list()
         self._prev_action = None
