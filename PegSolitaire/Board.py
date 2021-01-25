@@ -95,7 +95,9 @@ class Board:
         if not piece.straight_distance(hole) == 2:
             return False
 
-        return self._is_position_occupied(piece.get_middle_position(hole))
+        return self._is_position_occupied(piece) and self._is_position_occupied(
+            piece.get_middle_position(hole)
+        )
 
     def get_possible_moves(self) -> List[Tuple[Position]]:
         """
@@ -191,3 +193,9 @@ class Board:
         Returns a list of all piece positions.
         """
         return list(self._get_occupied_positions())
+
+    def __repr__(self) -> str:
+        return f"<Board {sorted(list(self._get_holes()))}>"
+
+    def __hash__(self):
+        return hash(self.__repr__())
