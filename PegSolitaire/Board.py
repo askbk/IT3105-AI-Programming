@@ -1,6 +1,6 @@
 from typing import List, Tuple, Set
 from itertools import product, accumulate, chain
-from functools import reduce
+from functools import reduce, lru_cache
 from Position import Position
 
 
@@ -34,6 +34,7 @@ class Board:
         self._hole_positions = set(hole_positions)
 
     @staticmethod
+    @lru_cache(maxsize=128)
     def _is_position_valid(
         board_shape: str, board_size: int, position: Position
     ) -> bool:
@@ -68,36 +69,35 @@ class Board:
         """
         return position in self._get_occupied_positions()
 
+    @staticmethod
+    @lru_cache(maxsize=32)
+    def _get_all_valid_positions_memoized(size, shape):
+        return set(
+            filter(
+                lambda position: Board._is_position_valid(shape, size, position),
+                map(Position, product(range(size), range(size))),
+            )
+        )
+
     def _get_all_valid_positions(self) -> Set[Position]:
         """
         Returns a list of all valid positions on the game board.
         """
-        return set(
-            filter(
-                lambda position: Board._is_position_valid(
-                    self._shape, self._size, position
-                ),
-                map(Position, product(range(self._size), range(self._size))),
-            )
-        )
+        return Board._get_all_valid_positions_memoized(self._size, self._shape)
 
     def _can_move_to_hole(self, piece: Position, hole: Position) -> bool:
         """
         Determines whether a piece can move into a given hole.
         """
-        if not (
-            piece.is_on_same_column(hole)
-            or piece.is_on_same_row(hole)
-            or piece.is_on_same_diagonal(hole)
-        ):
-            return False
+        try:
+            if not piece.straight_distance(hole) == 2:
+                return False
 
-        if not piece.straight_distance(hole) == 2:
+            return self._is_position_occupied(piece) and self._is_position_occupied(
+                piece.get_middle_position(hole)
+            )
+        except ValueError:
             return False
-
-        return self._is_position_occupied(piece) and self._is_position_occupied(
-            piece.get_middle_position(hole)
-        )
 
     def get_possible_moves(self) -> List[Tuple[Position]]:
         """
