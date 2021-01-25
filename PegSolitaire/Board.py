@@ -85,19 +85,15 @@ class Board:
         """
         Determines whether a piece can move into a given hole.
         """
-        if not (
-            piece.is_on_same_column(hole)
-            or piece.is_on_same_row(hole)
-            or piece.is_on_same_diagonal(hole)
-        ):
-            return False
+        try:
+            if not piece.straight_distance(hole) == 2:
+                return False
 
-        if not piece.straight_distance(hole) == 2:
+            return self._is_position_occupied(piece) and self._is_position_occupied(
+                piece.get_middle_position(hole)
+            )
+        except ValueError:
             return False
-
-        return self._is_position_occupied(piece) and self._is_position_occupied(
-            piece.get_middle_position(hole)
-        )
 
     def get_possible_moves(self) -> List[Tuple[Position]]:
         """
