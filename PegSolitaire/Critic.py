@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Tuple, List, Dict, Any
+import random
 
 
 class Critic:
@@ -14,6 +15,7 @@ class Critic:
         learning_rate=0.9,
         eligibility_decay_rate=0.9,
         discount_factor=0.9,
+        use_random_values=False,
         _value_function=None,
         _eligibilities=None,
     ):
@@ -42,6 +44,7 @@ class Critic:
         self._critic_nn_dimensions = critic_nn_dimensions
         self._eligibility_decay_rate = eligibility_decay_rate
         self._discount_factor = discount_factor
+        self._use_random_values = use_random_values
 
     @staticmethod
     def _from_old_parameters(
@@ -58,6 +61,7 @@ class Critic:
             learning_rate=old._learning_rate,
             eligibility_decay_rate=old._eligibility_decay_rate,
             discount_factor=old._discount_factor,
+            use_random_values=old._use_random_values,
             _value_function=value_function,
             _eligibilities=eligibilities,
         )
@@ -69,6 +73,9 @@ class Critic:
         try:
             return self._value_function[state]
         except KeyError:
+            if self._use_random_values:
+                return random.random()
+
             return 0
 
     def get_temporal_difference_error(
@@ -121,3 +128,13 @@ class Critic:
         }
 
         return Critic._from_old_parameters(self, new_value_function, new_eligibilities)
+
+    def reset_eligibilities(self):
+        """
+        Returns a new instance of the Critic with reset eligibilities.
+        """
+        return Critic._from_old_parameters(
+            self,
+            value_function=self._value_function,
+            eligibilities=dict.fromkeys(self._eligibilities, 0),
+        )

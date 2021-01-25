@@ -16,6 +16,7 @@ class Actor:
         learning_rate=0.01,
         initial_epsilon=0.05,
         epsilon_decay_rate=0.9,
+        use_random_values=False,
         _eligibilities=None,
         _policy=None,
     ):
@@ -34,6 +35,7 @@ class Actor:
         self._learning_rate = learning_rate
         self._epsilon = initial_epsilon
         self._epsilon_decay_rate = epsilon_decay_rate
+        self._use_random_values = use_random_values
 
     @staticmethod
     def _update(old: Actor, policy, eligibilities):
@@ -46,6 +48,7 @@ class Actor:
             learning_rate=old._learning_rate,
             initial_epsilon=old._epsilon * old._epsilon_decay_rate,
             epsilon_decay_rate=old._epsilon_decay_rate,
+            use_random_values=old._use_random_values,
             _eligibilities=eligibilities,
             _policy=policy,
         )
@@ -66,6 +69,9 @@ class Actor:
         try:
             return self._policy[(state, action)]
         except KeyError:
+            if self._use_random_values:
+                return random.random()
+
             return 0
 
     def get_action(self, current_state, possible_actions):
@@ -118,3 +124,13 @@ class Actor:
         }
 
         return Actor._update(self, new_policy, new_eligibilities)
+
+    def reset_eligibilities(self):
+        """
+        Returns a new instance of the Actor with reset eligibilities.
+        """
+        return Actor._update(
+            self,
+            policy=self._policy,
+            eligibilities=dict.fromkeys(self._eligibilities, 0),
+        )

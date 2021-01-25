@@ -54,16 +54,10 @@ class ACMAgent:
         self._state_action_pairs.append((state, action))
         self._prev_action = action
 
-    def choose_action(self, state, possible_actions: List, reward=0):
+    def _run_updates(self, state, reward):
         """
-        Choose next action to perform.
+        Run updates on actor and critic
         """
-        if self._prev_action is None:
-            action = self._actor.get_action(state, possible_actions)
-            self._store_state_action_pair(state, action)
-            return action
-
-        action = self._actor.get_action(state, possible_actions)
         delta = self._critic.get_temporal_difference_error(
             self._get_previous_state(), state, reward
         )
@@ -75,6 +69,29 @@ class ACMAgent:
             self._get_all_episode_state_action_pairs(), delta
         )
 
+    def choose_action(self, state, possible_actions: List, reward=0):
+        """
+        Choose next action to perform.
+        """
+        if self._prev_action is None:
+            action = self._actor.get_action(state, possible_actions)
+            self._store_state_action_pair(state, action)
+            return action
+
+        action = self._actor.get_action(state, possible_actions)
+
+        self._run_updates(state, reward)
+
         self._store_state_action_pair(state, action)
 
         return action
+
+    def end_state_reached(self, state, reward):
+        """
+        docstring
+        """
+        self._run_updates(state, reward)
+        self._critic = self._critic.reset_eligibilities()
+        self._actor = self._actor.reset_eligibilities()
+        self._state_action_pairs = list()
+        self._prev_action = None
