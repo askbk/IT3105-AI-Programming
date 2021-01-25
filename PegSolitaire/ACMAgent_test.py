@@ -25,7 +25,7 @@ def test_agent_choose_action():
     assert ACMAgent().choose_action(0, possible_actions, 0) in possible_actions
 
 
-def test_agent_performance_over_time():
+def test_agent_performance_improves_over_time():
     possible_actions = {
         0: random.sample([0, 1], k=2),
         1: random.sample([-1, 0, 1], k=3),
