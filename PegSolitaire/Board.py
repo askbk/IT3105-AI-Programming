@@ -32,6 +32,8 @@ class Board:
         self._size = size
         self._shape = shape
         self._hole_positions = set(hole_positions)
+        self._repr = f"<Board {sorted(list(self._get_holes()))}>"
+        self._hash = hash(self._repr)
 
     @staticmethod
     @lru_cache(maxsize=128)
@@ -195,7 +197,7 @@ class Board:
         return list(self._get_occupied_positions())
 
     def __repr__(self) -> str:
-        return f"<Board {sorted(list(self._get_holes()))}>"
+        return self._repr
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return self._hash
