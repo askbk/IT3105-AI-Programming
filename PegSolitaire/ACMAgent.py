@@ -42,9 +42,11 @@ class ACMAgent:
         return self._state_action_pairs
 
     def _get_all_episode_states(self):
-        return map(
-            lambda state_action: state_action[0],
-            self._get_all_episode_state_action_pairs(),
+        return list(
+            map(
+                lambda state_action: state_action[0],
+                self._get_all_episode_state_action_pairs(),
+            )
         )
 
     def _get_previous_state(self):
