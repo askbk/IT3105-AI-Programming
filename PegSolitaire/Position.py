@@ -37,13 +37,13 @@ class Position:
         """
         Calculates the distance to other, assuming it is on the same row, column or diagonal.
         """
-        if self.is_on_same_column(other) or self.is_on_same_row(other):
-            return abs(self._row - other._row) + abs(self._col - other._col)
+        if self.is_on_same_column(other) or self.is_on_same_diagonal(other):
+            return abs(self._row - other._row)
 
-        if not self.is_on_same_diagonal(other):
-            raise ValueError(f"There is no straight line between {self} and {other}.")
+        if self.is_on_same_row(other):
+            return abs(self._col - other._col)
 
-        return abs(self._row - other._row)
+        raise ValueError(f"There is no straight line between {self} and {other}.")
 
     def get_middle_position(self, other: Position) -> Position:
         """
