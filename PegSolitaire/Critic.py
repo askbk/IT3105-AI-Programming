@@ -74,7 +74,7 @@ class Critic:
             return self._value_function[state]
         except KeyError:
             if self._use_random_values:
-                return random.random()
+                return random.uniform(-0.1, 0.1)
 
             return 0
 
@@ -102,22 +102,23 @@ class Critic:
         except KeyError:
             return 0
 
-    def update(self, old_state: Any, states: List, td_error: float):
+    def update(self, states: List, td_error: float):
         """
         Returns a new instance of the Critic with updated value function and eligibilities.
+        The most recent state of the current episode should be last in states.
         """
         new_value_function = {
             state: self._get_value(state)
             + self._learning_rate
             * td_error
-            * self._get_eligibility(state, was_previous=(state == old_state))
+            * self._get_eligibility(state, was_previous=(state == states[-1]))
             for state in states
         }
 
         new_eligibilities = {
             state: self._discount_factor
             * self._eligibility_decay_rate
-            * self._get_eligibility(state, was_previous=(state == old_state))
+            * self._get_eligibility(state, was_previous=(state == states[-1]))
             for state in states
         }
 

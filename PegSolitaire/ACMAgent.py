@@ -34,6 +34,7 @@ class ACMAgent:
             learning_rate=critic_learning_rate,
             eligibility_decay_rate=critic_eligibility_decay_rate,
             discount_factor=critic_discount_factor,
+            use_random_values=True,
         )
         self._prev_action = None
         self._state_action_pairs = list()
@@ -64,9 +65,7 @@ class ACMAgent:
             self._get_previous_state(), state, reward
         )
 
-        self._critic = self._critic.update(
-            self._get_previous_state(), self._get_all_episode_states(), delta
-        )
+        self._critic = self._critic.update(self._get_all_episode_states(), delta)
         self._actor = self._actor.update(
             self._get_all_episode_state_action_pairs(), delta
         )
@@ -75,14 +74,10 @@ class ACMAgent:
         """
         Choose next action to perform.
         """
-        if self._prev_action is None:
-            action = self._actor.get_action(state, possible_actions)
-            self._store_state_action_pair(state, action)
-            return action
-
         action = self._actor.get_action(state, possible_actions)
 
-        self._run_updates(state, reward)
+        if self._prev_action is not None:
+            self._run_updates(state, reward)
 
         self._store_state_action_pair(state, action)
 
