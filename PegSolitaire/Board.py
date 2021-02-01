@@ -34,6 +34,7 @@ class Board:
         self._hole_positions = set(hole_positions)
         self._repr = f"<Board {sorted(list(self._get_holes()))}>"
         self._hash = hash(self._repr)
+        self._possible_moves = self.get_possible_moves()
 
     @staticmethod
     @lru_cache(maxsize=128)
@@ -101,7 +102,7 @@ class Board:
         except ValueError:
             return False
 
-    def get_possible_moves(self) -> List[Tuple[Position]]:
+    def _get_possible_moves(self) -> List[Tuple[Position]]:
         """
         Get currently possible moves.
         """
@@ -119,6 +120,15 @@ class Board:
                 )
             )
         )
+
+    def get_possible_moves(self) -> List[Tuple[Position]]:
+        """
+        Get currently possible moves.
+        """
+        try:
+            return self._possible_moves
+        except AttributeError:
+            return self._get_possible_moves()
 
     def make_move(self, move: Tuple[Position]):
         """
@@ -149,7 +159,7 @@ class Board:
         """
         Determines whether the game is finished, in essence if any further moves are possible.
         """
-        return len(self.get_possible_moves()) == 0
+        return len(self._possible_moves) == 0
 
     def get_game_score(self):
         """
