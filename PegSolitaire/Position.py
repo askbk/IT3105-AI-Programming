@@ -60,22 +60,16 @@ class Position:
         return Position((row, col))
 
     def get_coordinates(self) -> Tuple[int]:
-        return tuple((self._row, self._col))
+        return (self._row, self._col)
 
     def __eq__(self, other: Position) -> bool:
-        return self._row == other._row and self._col == other._col
+        return (self._row, self._col) == (other._row, other._col)
 
     def __hash__(self):
         return self._hash
 
     def __lt__(self, other: Position) -> bool:
-        if self._row < other._row:
-            return True
-
-        if self._row == other._row and self._col < other._col:
-            return True
-
-        return False
+        return (self._row, self._col) < (other._row, other._col)
 
     def __repr__(self) -> str:
         return self._repr
