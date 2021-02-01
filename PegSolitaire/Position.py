@@ -14,6 +14,8 @@ class Position:
 
         self._row = row
         self._col = col
+        self._hash = hash((self._row, self._col))
+        self._repr = f"Position(({self._row}, {self._col}))"
 
     def is_on_same_row(self, other: Position) -> bool:
         """
@@ -64,7 +66,7 @@ class Position:
         return self._row == other._row and self._col == other._col
 
     def __hash__(self):
-        return hash((self._row, self._col))
+        return self._hash
 
     def __lt__(self, other: Position) -> bool:
         if self._row < other._row:
@@ -76,7 +78,4 @@ class Position:
         return False
 
     def __repr__(self) -> str:
-        try:
-            return f"Position(({self._row}, {self._col}))"
-        except:
-            return "Position()"
+        return self._repr
