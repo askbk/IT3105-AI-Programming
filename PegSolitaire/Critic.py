@@ -107,27 +107,25 @@ class Critic:
         Returns a new instance of the Critic with updated value function and eligibilities.
         """
         new_value_function = {
-            **self._value_function,
-            **{
-                state: self._get_value(state)
-                + self._learning_rate
-                * td_error
-                * self._get_eligibility(state, was_previous=(state == old_state))
-                for state in states
-            },
+            state: self._get_value(state)
+            + self._learning_rate
+            * td_error
+            * self._get_eligibility(state, was_previous=(state == old_state))
+            for state in states
         }
 
         new_eligibilities = {
-            **self._eligibilities,
-            **{
-                state: self._discount_factor
-                * self._eligibility_decay_rate
-                * self._get_eligibility(state, was_previous=(state == old_state))
-                for state in states
-            },
+            state: self._discount_factor
+            * self._eligibility_decay_rate
+            * self._get_eligibility(state, was_previous=(state == old_state))
+            for state in states
         }
 
-        return Critic._from_old_parameters(self, new_value_function, new_eligibilities)
+        return Critic._from_old_parameters(
+            self,
+            self._value_function | new_value_function,
+            self._eligibilities | new_eligibilities,
+        )
 
     def reset_eligibilities(self):
         """

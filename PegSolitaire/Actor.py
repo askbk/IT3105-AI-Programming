@@ -114,31 +114,27 @@ class Actor:
         The most recent state-action pair of the current episode should be last in state_actions.
         """
         new_policy = {
-            **self._policy,
-            **{
-                state_action: self._get_action_value(state_action[0], state_action[1])
-                + self._learning_rate
-                * td_error
-                * self._get_eligibility(
-                    state_action, was_previous=(state_action == state_actions[-1])
-                )
-                for state_action in state_actions
-            },
+            state_action: self._get_action_value(state_action[0], state_action[1])
+            + self._learning_rate
+            * td_error
+            * self._get_eligibility(
+                state_action, was_previous=(state_action == state_actions[-1])
+            )
+            for state_action in state_actions
         }
 
         new_eligibilities = {
-            **self._eligibilities,
-            **{
-                state_action: self._discount_factor
-                * self._eligibility_decay_rate
-                * self._get_eligibility(
-                    state_action, was_previous=(state_action == state_actions[-1])
-                )
-                for state_action in state_actions
-            },
+            state_action: self._discount_factor
+            * self._eligibility_decay_rate
+            * self._get_eligibility(
+                state_action, was_previous=(state_action == state_actions[-1])
+            )
+            for state_action in state_actions
         }
 
-        return Actor._update(self, new_policy, new_eligibilities)
+        return Actor._update(
+            self, self._policy | new_policy, self._eligibilities | new_eligibilities
+        )
 
     def reset_eligibilities_and_decay_epsilon(self):
         """
