@@ -87,19 +87,21 @@ class Actor:
 
             return 0
 
-    def get_action(self, current_state, possible_actions):
-        """
-        Returns the action recommended by the actor.
-        """
+    def _get_action_deterministic(self, current_state, possible_actions):
         action_values = map(
             lambda action: (action, self._get_action_value(current_state, action)),
             possible_actions,
         )
-
-        best_action = reduce(
+        return reduce(
             lambda best, current: best if best[1] > current[1] else current,
             action_values,
         )[0]
+
+    def get_action(self, current_state, possible_actions):
+        """
+        Returns the action recommended by the actor.
+        """
+        best_action = self._get_action_deterministic(current_state, possible_actions)
 
         if random.random() < self._epsilon:
             return random.choice(possible_actions)
