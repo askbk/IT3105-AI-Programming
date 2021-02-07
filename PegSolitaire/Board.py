@@ -211,3 +211,7 @@ class Board:
 
     def __hash__(self):
         return self._hash
+
+
+diamond_4 = Board(size=4, shape="diamond", hole_positions=[Position((2, 1))])
+triangle_5 = Board(size=5, shape="triangle", hole_positions=[Position((1, 1))])
