@@ -2,6 +2,7 @@ from __future__ import annotations
 import random
 from typing import Tuple, List, Dict, Any, Optional
 from Agent.TableFunctionApproximator import TableFunctionApproximator
+from Agent.NNFunctionApproximator import NNFunctionApproximator
 from Agent.FunctionApproximator import FunctionApproximator
 
 
@@ -20,11 +21,6 @@ class Critic:
         _value_function: Optional[FunctionApproximator] = None,
         _random_initialization=True,
     ):
-        if critic_function not in ["table", "neural_network"]:
-            raise ValueError(
-                "critic_function must be either 'table' or 'neural_network'."
-            )
-
         if critic_function == "neural_network" and critic_nn_dimensions is None:
             raise ValueError(
                 "Dimensions of neural network must be supplied when critic_function='neural_network'."
@@ -37,6 +33,17 @@ class Critic:
                     discount_factor=discount_factor,
                     eligibility_decay_rate=eligibility_decay_rate,
                     random_initialization=_random_initialization,
+                )
+            elif critic_function == "neural_network":
+                self._value_function = NNFunctionApproximator(
+                    dimensions=critic_nn_dimensions,
+                    learning_rate=learning_rate,
+                    discount_factor=discount_factor,
+                    eligibility_decay_rate=eligibility_decay_rate,
+                )
+            else:
+                raise ValueError(
+                    f"critic_function must be either 'table' or 'neural_network', was {critic_function}."
                 )
         else:
             self._value_function = _value_function

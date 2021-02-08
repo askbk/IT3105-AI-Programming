@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 from Agent.Critic import Critic
 
 
@@ -56,8 +57,8 @@ def test_update():
 
 
 def test_nn_critic():
-    state1 = 0
-    state2 = 1
+    state1 = np.array([[0, 1]])
+    state2 = np.array([[1, 0]])
     reward1 = 0
     reward2 = 1
     critic = Critic(
