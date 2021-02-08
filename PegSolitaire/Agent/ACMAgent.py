@@ -34,7 +34,6 @@ class ACMAgent:
             learning_rate=critic_learning_rate,
             eligibility_decay_rate=critic_eligibility_decay_rate,
             discount_factor=critic_discount_factor,
-            use_random_values=True,
         )
         self._prev_action = None
         self._state_action_pairs = list()
