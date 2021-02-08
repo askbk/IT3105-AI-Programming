@@ -52,3 +52,31 @@ def test_update():
     critic = critic.update([state1, state2], td_error)
     assert round(critic.get_temporal_difference_error(state2, state1, 0), 6) == 0.087561
     assert round(critic.get_temporal_difference_error(state1, state2, 1), 5) == 0.90081
+
+
+def test_nn_critic():
+    state1 = 0
+    state2 = 1
+    reward1 = 0
+    reward2 = 1
+    critic = Critic(
+        critic_function="neural_network",
+        critic_nn_dimensions=(2, 1),
+        learning_rate=0.1,
+        discount_factor=0.9,
+        eligibility_decay_rate=0.9,
+    )
+
+    td_error = critic.get_temporal_difference_error(state1, state2, reward2)
+    assert td_error == 1
+
+    # move from state 1 to state 2 with reward 1
+    critic = critic.update([state2, state1], td_error)
+
+    td_error = critic.get_temporal_difference_error(state2, state1, reward1)
+    assert round(td_error, 2) == 0.09
+
+    # move from state 2 to state 1 with reward 0
+    critic = critic.update([state1, state2], td_error)
+    assert round(critic.get_temporal_difference_error(state2, state1, 0), 6) == 0.087561
+    assert round(critic.get_temporal_difference_error(state1, state2, 1), 5) == 0.90081
