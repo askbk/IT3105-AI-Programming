@@ -12,7 +12,7 @@ import numpy as np
 # SplitGD.fit.
 #
 # WARNING.  In THEORY, you should be able to use this class by just subclassing it and writing your own code
-#  for the "modify_gradients" method.  However, there are many practical issues involving versions of tensorflow, use
+#  for the "_modify_gradients" method.  However, there are many practical issues involving versions of tensorflow, use
 # of keras and the tensorflow backend, etc.  So the main purpose of this file is to show the basics of how you can
 # split gradient descent into two parts using tf.GradientTape.  Many similar examples exist online, but, again, there
 # is no guarantee that they will work seamlessly with your own code.
@@ -23,15 +23,15 @@ class SplitGD:
         self.model = keras_model
 
     # Subclass this with something useful.
-    def modify_gradients(self, gradients):
+    def _modify_gradients(self, gradients):
         return gradients
 
     # This returns a tensor of losses, OR the value of the averaged tensor.  Note: use .numpy() to get the
     # value of a tensor.
-    def gen_loss(self, features, targets, avg=False):
+    def _gen_loss(self, features, targets, avg=False):
         predictions = self.model(
             features
-        )  # Fe<ed-forward pass to produce outputs/predictions
+        )  # Feed-forward pass to produce outputs/predictions
         loss = self.model.loss(targets, predictions)  # model.loss = the loss function
         return tf.reduce_mean(loss).numpy() if avg else loss
 
@@ -52,12 +52,12 @@ class SplitGD:
                     feaset, tarset = gen_random_minibatch(
                         train_ins, train_targs, mbs=mbs
                     )
-                    loss = self.gen_loss(feaset, tarset, avg=False)
+                    loss = self._gen_loss(feaset, tarset, avg=False)
                     gradients = tape.gradient(loss, params)
-                    gradients = self.modify_gradients(gradients)
+                    gradients = self._modify_gradients(gradients)
                     self.model.optimizer.apply_gradients(zip(gradients, params))
             if verbosity > 0:
-                self.end_of_epoch_action(
+                self._end_of_epoch_action(
                     train_ins,
                     train_targs,
                     val_ins,
@@ -75,7 +75,7 @@ class SplitGD:
     # corresponds to the correct value.  For more metrics, read up on Keras.metrics.
     # Verbosity levels: 0 = no prints, 1 = only my own prints, 2 = my prints + TF prints (in call to model.evaluate
 
-    def gen_evaluation(self, features, targets, avg=False, verbosity=0, callbacks=[]):
+    def _gen_evaluation(self, features, targets, avg=False, verbosity=0, callbacks=[]):
         loss, evaluation = self.model.evaluate(
             features,
             targets,
@@ -86,11 +86,11 @@ class SplitGD:
         return evaluation, loss
         # return (tf.reduce_mean(evaluation).numpy() if avg else evaluation), loss
 
-    def status_display(self, val, loss, verbosity=1, mode="Train"):
+    def _status_display(self, val, loss, verbosity=1, mode="Train"):
         if verbosity > 0:
             print("{0} *** Loss: {1} Eval: {2}".format(mode, loss, val), end=" ")
 
-    def end_of_epoch_action(
+    def _end_of_epoch_action(
         self,
         train_ins,
         train_targs,
@@ -102,25 +102,25 @@ class SplitGD:
     ):
         print("\n Epoch: {0}".format(epoch), end=" ")
         # Calculate Loss and Evaluation for entire training set
-        val, loss = self.gen_evaluation(
+        val, loss = self._gen_evaluation(
             train_ins, train_targs, avg=True, verbosity=verbosity, callbacks=callbacks
         )
-        self.status_display(val, loss, verbosity=verbosity, mode="Train")
+        self._status_display(val, loss, verbosity=verbosity, mode="Train")
         val2, loss2 = 0, 0
         if (
             len(valid_ins) > 0
         ):  # Calculate Loss and Evaluation for entire Validation Set
-            val2, loss2 = self.gen_evaluation(
+            val2, loss2 = self._gen_evaluation(
                 valid_ins,
                 valid_targs,
                 avg=True,
                 verbosity=verbosity,
                 callbacks=callbacks,
             )
-            self.status_display(val2, loss2, verbosity=verbosity, mode="Validation")
-        self.update_callbacks(epoch, (loss, val, loss2, val2), callbacks)
+            self._status_display(val2, loss2, verbosity=verbosity, mode="Validation")
+        self._update_callbacks(epoch, (loss, val, loss2, val2), callbacks)
 
-    def update_callbacks(self, epoch, quad, callbacks=[]):
+    def _update_callbacks(self, epoch, quad, callbacks=[]):
         cb_log = {
             "loss": quad[0],
             "metric": quad[1],
