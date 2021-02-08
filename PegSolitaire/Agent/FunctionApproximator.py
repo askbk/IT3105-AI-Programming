@@ -11,3 +11,6 @@ class FunctionApproximator:
 
     def update(self, states, td_error):
         raise NotImplementedError()
+
+    def reset_eligibilities(self):
+        raise NotImplementedError()

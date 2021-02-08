@@ -1,6 +1,8 @@
 from __future__ import annotations
 import random
-from typing import Tuple, List, Dict, Any
+from typing import Tuple, List, Dict, Any, Optional
+from Agent.TableFunctionApproximator import TableFunctionApproximator
+from Agent.FunctionApproximator import FunctionApproximator
 
 
 class Critic:
@@ -15,9 +17,8 @@ class Critic:
         learning_rate=0.9,
         eligibility_decay_rate=0.9,
         discount_factor=0.9,
-        use_random_values=False,
-        _value_function=None,
-        _eligibilities=None,
+        _value_function: Optional[FunctionApproximator] = None,
+        _random_initialization=True,
     ):
         if critic_function not in ["table", "neural_network"]:
             raise ValueError(
@@ -30,53 +31,30 @@ class Critic:
             )
 
         if _value_function is None:
-            self._value_function = dict()
+            if critic_function == "table":
+                self._value_function = TableFunctionApproximator(
+                    learning_rate=learning_rate,
+                    discount_factor=discount_factor,
+                    eligibility_decay_rate=eligibility_decay_rate,
+                    random_initialization=_random_initialization,
+                )
         else:
             self._value_function = _value_function
 
-        if _eligibilities is None:
-            self._eligibilities = dict()
-        else:
-            self._eligibilities = _eligibilities
-
-        self._learning_rate = learning_rate
-        self._critic_function = critic_function
-        self._critic_nn_dimensions = critic_nn_dimensions
-        self._eligibility_decay_rate = eligibility_decay_rate
         self._discount_factor = discount_factor
-        self._use_random_values = use_random_values
 
     @staticmethod
     def _from_old_parameters(
         old: Critic,
         value_function: Dict[Any, float],
-        eligibilities: Dict[Any, float],
     ):
         """
         Creates a new Critic instance with the same parameters as old, but with a new value function.
         """
         return Critic(
-            critic_function=old._critic_function,
-            critic_nn_dimensions=old._critic_nn_dimensions,
-            learning_rate=old._learning_rate,
-            eligibility_decay_rate=old._eligibility_decay_rate,
             discount_factor=old._discount_factor,
-            use_random_values=old._use_random_values,
             _value_function=value_function,
-            _eligibilities=eligibilities,
         )
-
-    def _get_value(self, state: Any):
-        """
-        Get the value for the state.
-        """
-        try:
-            return self._value_function[state]
-        except KeyError:
-            if self._use_random_values:
-                return random.uniform(-0.1, 0.1)
-
-            return 0
 
     def get_temporal_difference_error(
         self, old_state: Any, new_state: Any, reward: float
@@ -86,46 +64,17 @@ class Critic:
         """
         return (
             reward
-            + self._discount_factor * self._get_value(new_state)
-            - self._get_value(old_state)
+            + self._discount_factor * self._value_function.get_value(new_state)
+            - self._value_function.get_value(old_state)
         )
-
-    def _get_eligibility(self, state: Any, was_previous=False):
-        """
-        Get eligibility of a state.
-        """
-        if was_previous:
-            return 1
-
-        try:
-            return self._eligibilities[state]
-        except KeyError:
-            return 0
 
     def update(self, states: List, td_error: float):
         """
         Returns a new instance of the Critic with updated value function and eligibilities.
         The most recent state of the current episode should be last in states.
         """
-        new_value_function = {
-            state: self._get_value(state)
-            + self._learning_rate
-            * td_error
-            * self._get_eligibility(state, was_previous=(state == states[-1]))
-            for state in states
-        }
-
-        new_eligibilities = {
-            state: self._discount_factor
-            * self._eligibility_decay_rate
-            * self._get_eligibility(state, was_previous=(state == states[-1]))
-            for state in states
-        }
-
         return Critic._from_old_parameters(
-            self,
-            self._value_function | new_value_function,
-            self._eligibilities | new_eligibilities,
+            self, value_function=self._value_function.update(states, td_error)
         )
 
     def reset_eligibilities(self):
@@ -134,6 +83,5 @@ class Critic:
         """
         return Critic._from_old_parameters(
             self,
-            value_function=self._value_function,
-            eligibilities=dict.fromkeys(self._eligibilities, 0),
+            value_function=self._value_function.reset_eligibilities(),
         )

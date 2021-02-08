@@ -37,6 +37,7 @@ def test_update():
         learning_rate=0.1,
         discount_factor=0.9,
         eligibility_decay_rate=0.9,
+        _random_initialization=False,
     )
 
     td_error = critic.get_temporal_difference_error(state1, state2, reward2)
