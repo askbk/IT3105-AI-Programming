@@ -77,7 +77,7 @@ def test_agent_performance_improves_over_time():
     )
 
 
-def test_perfomance_increases_with_multiple_episodes():
+def test_performance_increases_with_multiple_episodes():
     episode_count = 5
 
     possible_actions = {
