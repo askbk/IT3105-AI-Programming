@@ -1,6 +1,6 @@
 from __future__ import annotations
-from typing import Tuple, List, Dict, Any
 import random
+from typing import Tuple, List, Dict, Any
 
 
 class Critic:

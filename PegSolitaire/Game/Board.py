@@ -1,7 +1,7 @@
 from typing import List, Tuple, Set
 from itertools import product, accumulate, chain
 from functools import reduce, lru_cache
-from Position import Position
+from Game.Position import Position
 
 
 class Board:

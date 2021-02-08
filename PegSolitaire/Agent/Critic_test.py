@@ -1,5 +1,5 @@
-from Critic import Critic
 import pytest
+from Agent.Critic import Critic
 
 
 def test_constructor():

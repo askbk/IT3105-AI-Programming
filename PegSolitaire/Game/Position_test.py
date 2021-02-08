@@ -1,6 +1,6 @@
 import pytest
-from Position import Position
-from Board import Board
+from Game.Position import Position
+from Game.Board import Board
 
 
 def test_position_constructor():

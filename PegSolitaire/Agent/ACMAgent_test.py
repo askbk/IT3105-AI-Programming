@@ -1,7 +1,7 @@
-from ACMAgent import ACMAgent
+import random
 from itertools import accumulate
 from functools import reduce
-import random
+from Agent.ACMAgent import ACMAgent
 
 
 def test_agent_constructor():

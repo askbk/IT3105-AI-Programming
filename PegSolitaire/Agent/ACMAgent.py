@@ -1,7 +1,7 @@
 import random
 from typing import List
-from Actor import Actor
-from Critic import Critic
+from Agent.Actor import Actor
+from Agent.Critic import Critic
 
 
 class ACMAgent:

@@ -1,5 +1,5 @@
 import numpy as np
-from Actor import Actor
+from Agent.Actor import Actor
 
 
 def test_constructor():
