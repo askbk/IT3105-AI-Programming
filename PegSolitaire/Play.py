@@ -1,7 +1,6 @@
-from RandomAgent import RandomAgent
-from ACMAgent import ACMAgent
-from Board import Board, diamond_4, triangle_5
-from Position import Position
+from Agent.ACMAgent import ACMAgent
+from Game.Board import Board, diamond_4, triangle_5
+from Game.Position import Position
 from PerformanceDisplay import graph_performance
 from Player import Player
 

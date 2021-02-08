@@ -1,14 +1,14 @@
 import numpy as np
 from sklearn.model_selection import ParameterGrid
 from sklearn.metrics import make_scorer
-from ACMAgent import ACMAgent
+from Agent.ACMAgent import ACMAgent
 from Player import Player
 
 from sklearn.utils.fixes import loguniform
 from sklearn.linear_model import SGDClassifier
 from sklearn.base import BaseEstimator
 
-from Board import diamond_4, triangle_5
+from Game.Board import diamond_4, triangle_5
 
 
 def make_param_grid(dictionary):
