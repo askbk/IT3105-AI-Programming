@@ -24,7 +24,7 @@ class SplitGD:
 
     # Subclass this with something useful.
     def _modify_gradients(self, gradients):
-        return gradients
+        raise NotImplementedError
 
     # This returns a tensor of losses, OR the value of the averaged tensor.  Note: use .numpy() to get the
     # value of a tensor.
