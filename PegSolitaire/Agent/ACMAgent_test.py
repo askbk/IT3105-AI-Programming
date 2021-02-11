@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from itertools import accumulate
 from functools import reduce
 from Agent.ACMAgent import ACMAgent
@@ -161,12 +162,12 @@ def test_performance_increases_with_multiple_episodes_nn_critic():
         while current_state != end_state and moves < 50:
             moves += 1
             action = agent.choose_action(
-                current_state,
+                [[[current_state]]],
                 possible_actions[current_state],
                 reward=rewards[current_state],
             )
             next_state = current_state + action
-            state_actions.append((current_state, action))
+            state_actions.append(([[[current_state]]], action))
             current_state = next_state
 
         agent.end_state_reached(end_state, reward=rewards[end_state])

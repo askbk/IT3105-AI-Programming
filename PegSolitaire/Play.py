@@ -1,4 +1,4 @@
-from Agent.ACMAgent import ACMAgent
+from Agent.ACMAgent import ACMAgent, agent_diamond_4, agent_nn_diamond_4
 from Game.Board import Board, diamond_4, triangle_5
 from Game.Position import Position
 from PerformanceDisplay import graph_performance
@@ -33,4 +33,5 @@ if __name__ == "__main__":
     player = Player(agent)
 
     graph_performance(player.play_multiple_episodes(diamond_4, 100))
+    # graph_performance(Player(agent_nn_diamond_4).play_multiple_episodes(diamond_4, 100))
     # graph_performance(Player(ACMAgent(**a)).play_multiple_episodes(triangle_5, 400))

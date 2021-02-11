@@ -30,7 +30,8 @@ class ACMAgent:
             epsilon_decay_rate=epsilon_decay_rate,
         )
         self._critic = Critic(
-            critic_function="table",
+            critic_function=critic_function,
+            critic_nn_dimensions=critic_nn_dimensions,
             learning_rate=critic_learning_rate,
             eligibility_decay_rate=critic_eligibility_decay_rate,
             discount_factor=critic_discount_factor,
@@ -91,3 +92,32 @@ class ACMAgent:
         self._actor = self._actor.reset_eligibilities_and_decay_epsilon()
         self._state_action_pairs = list()
         self._prev_action = None
+
+
+agent_diamond_4 = ACMAgent(
+    **{
+        "actor_discount_factor": 0.9,
+        "actor_eligibility_decay_rate": 0.9,
+        "actor_learning_rate": 0.001,
+        "critic_discount_factor": 0.5,
+        "critic_eligibility_decay_rate": 0.5,
+        "critic_learning_rate": 0.001,
+        "epsilon_decay_rate": 0.9,
+        "initial_epsilon": 1,
+    }
+)
+
+agent_nn_diamond_4 = ACMAgent(
+    **{
+        "actor_discount_factor": 0.9,
+        "actor_eligibility_decay_rate": 0.9,
+        "actor_learning_rate": 0.001,
+        "critic_function": "neural_network",
+        "critic_nn_dimensions": (16, 8, 1),
+        "critic_discount_factor": 0.5,
+        "critic_eligibility_decay_rate": 0.5,
+        "critic_learning_rate": 0.001,
+        "epsilon_decay_rate": 0.9,
+        "initial_epsilon": 1,
+    }
+)
