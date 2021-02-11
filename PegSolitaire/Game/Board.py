@@ -1,3 +1,4 @@
+import numpy as np
 from typing import List, Tuple, Set
 from itertools import product, accumulate, chain
 from functools import reduce, lru_cache
@@ -32,7 +33,7 @@ class Board:
         self._size = size
         self._shape = shape
         self._hole_positions = set(hole_positions)
-        self._repr = f"<Board {sorted(list(self._get_holes()))}>"
+        self._repr = f"<Board {sorted(self._get_holes())}>"
         self._hash = hash(self._repr)
         self._possible_moves = self.get_possible_moves()
 
@@ -71,6 +72,14 @@ class Board:
         Determines if a position is occupied by a piece.
         """
         return position in self._get_occupied_positions()
+
+    def numpy(self):
+        return np.array(
+            [
+                0 if position in self._hole_positions else 1
+                for position in sorted(self._get_all_valid_positions())
+            ]
+        )
 
     @staticmethod
     @lru_cache(maxsize=32)
