@@ -18,7 +18,7 @@ class Critic:
         learning_rate=0.9,
         eligibility_decay_rate=0.9,
         discount_factor=0.9,
-        _value_function: Optional[FunctionApproximator] = None,
+        _value_function=None,
         _random_initialization=True,
     ):
         if critic_function == "neural_network" and critic_nn_dimensions is None:
