@@ -73,14 +73,14 @@ class Actor:
         if was_previous:
             return 1
 
-        return self._eligibilities[state_action]
+        return self._eligibilities[str(state_action)]
 
     def _get_action_value(self, state, action):
         """
         Get current policy value for an action in the given state
         """
         try:
-            return self._policy[(state, action)]
+            return self._policy[str((state, action))]
         except KeyError:
             if self._use_random_values:
                 return random.random()
@@ -114,7 +114,7 @@ class Actor:
         The most recent state-action pair of the current episode should be last in state_actions.
         """
         new_policy = {
-            state_action: self._get_action_value(state_action[0], state_action[1])
+            str(state_action): self._get_action_value(state_action[0], state_action[1])
             + self._learning_rate
             * td_error
             * self._get_eligibility(
@@ -124,7 +124,7 @@ class Actor:
         }
 
         new_eligibilities = {
-            state_action: self._discount_factor
+            str(state_action): self._discount_factor
             * self._eligibility_decay_rate
             * self._get_eligibility(
                 state_action, was_previous=(state_action == state_actions[-1])

@@ -27,9 +27,9 @@ def test_update():
     actor = Actor(
         initial_epsilon=0,
         _eligibilities={
-            state_action1: 0.9,
-            state_action2: 0.8,
-            state_action3: 1,
+            str(state_action1): 0.9,
+            str(state_action2): 0.8,
+            str(state_action3): 1,
         },
     )
     actor = actor.update([state_action1, state_action2, state_action3], td_error)
@@ -47,9 +47,9 @@ def test_epsilon_greedy_actor():
         initial_epsilon=epsilon,
         epsilon_decay_rate=1,
         _eligibilities={
-            state_action1: 0.9,
-            state_action2: 0.8,
-            state_action3: 1,
+            str(state_action1): 0.9,
+            str(state_action2): 0.8,
+            str(state_action3): 1,
         },
     )
     actor = actor.update([state_action1, state_action2, state_action3], td_error)
