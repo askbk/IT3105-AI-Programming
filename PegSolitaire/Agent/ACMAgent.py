@@ -116,7 +116,7 @@ agent_nn_diamond_4 = ACMAgent(
         "critic_nn_dimensions": (16, 8, 1),
         "critic_discount_factor": 0.5,
         "critic_eligibility_decay_rate": 0.5,
-        "critic_learning_rate": 0.001,
+        "critic_learning_rate": 0.00001,
         "epsilon_decay_rate": 0.9,
         "initial_epsilon": 1,
     }
