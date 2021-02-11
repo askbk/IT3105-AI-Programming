@@ -33,7 +33,12 @@ class Board:
         self._size = size
         self._shape = shape
         self._hole_positions = set(hole_positions)
-        self._repr = f"<Board {sorted(self._get_holes())}>"
+        self._repr = str(
+            [
+                0 if position in self._hole_positions else 1
+                for position in sorted(self._get_all_valid_positions())
+            ]
+        )
         self._hash = hash(self._repr)
         self._possible_moves = self.get_possible_moves()
 
@@ -72,14 +77,6 @@ class Board:
         Determines if a position is occupied by a piece.
         """
         return position in self._get_occupied_positions()
-
-    def numpy(self):
-        return np.array(
-            [
-                0 if position in self._hole_positions else 1
-                for position in sorted(self._get_all_valid_positions())
-            ]
-        )
 
     @staticmethod
     @lru_cache(maxsize=32)
