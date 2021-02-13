@@ -167,7 +167,7 @@ def test_performance_increases_with_multiple_episodes_nn_critic():
                 reward=rewards[current_state],
             )
             next_state = current_state + action
-            state_actions.append(([[[current_state]]], action))
+            state_actions.append((current_state, action))
             current_state = next_state
 
         agent.end_state_reached(end_state, reward=rewards[end_state])

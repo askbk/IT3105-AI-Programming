@@ -57,14 +57,14 @@ def test_update():
 
 
 def test_nn_critic():
-    state1 = np.array([[0, 1]])
-    state2 = np.array([[1, 0]])
-    reward1 = 0
-    reward2 = 1
+    state1 = [0, 1]
+    state2 = [1, 0]
+    reward1 = [[0]]
+    reward2 = [[1]]
     critic = Critic(
         critic_function="neural_network",
         critic_nn_dimensions=(2, 1),
-        learning_rate=0.1,
+        learning_rate=0.0001,
         discount_factor=0.9,
         eligibility_decay_rate=0.9,
     )
