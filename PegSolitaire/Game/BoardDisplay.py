@@ -116,6 +116,7 @@ class BoardDisplay:
             plt.clf()
             BoardDisplay._display_board_with_move(board, move)
             plt.pause(pause)
+            plt.clf()
 
 
 if __name__ == "__main__":

@@ -97,13 +97,13 @@ class Actor:
             action_values,
         )[0]
 
-    def get_action(self, current_state, possible_actions):
+    def get_action(self, current_state, possible_actions, epsilon_greedy=True):
         """
         Returns the action recommended by the actor.
         """
         best_action = self._get_action_deterministic(current_state, possible_actions)
 
-        if random.random() < self._epsilon:
+        if epsilon_greedy and random.random() < self._epsilon:
             return random.choice(possible_actions)
 
         return best_action

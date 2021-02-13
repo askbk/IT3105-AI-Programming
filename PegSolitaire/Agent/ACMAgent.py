@@ -70,11 +70,15 @@ class ACMAgent:
             self._get_all_episode_state_action_pairs(), delta
         )
 
-    def choose_action(self, state, possible_actions: List, reward=0):
+    def choose_action(
+        self, state, possible_actions: List, reward=0, epsilon_greedy=True
+    ):
         """
         Choose next action to perform.
         """
-        action = self._actor.get_action(state, possible_actions)
+        action = self._actor.get_action(
+            state, possible_actions, epsilon_greedy=epsilon_greedy
+        )
 
         if self._prev_action is not None:
             self._run_updates(state, reward)
