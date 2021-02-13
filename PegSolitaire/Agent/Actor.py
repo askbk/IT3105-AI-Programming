@@ -2,6 +2,7 @@ from __future__ import annotations
 import random
 from functools import reduce
 from itertools import product
+from Agent.EligibilityTable import EligibilityTable
 
 
 class Actor:
@@ -17,63 +18,49 @@ class Actor:
         initial_epsilon=0.05,
         epsilon_decay_rate=0.9,
         use_random_values=False,
-        _eligibilities=None,
+        _eligibility_table=None,
         _policy=None,
     ):
-        if _eligibilities is not None:
-            self._eligibilities = _eligibilities
-        else:
-            self._eligibilities = dict()
+        self._eligibility_table = (
+            EligibilityTable(discount_factor, eligibility_decay_rate)
+            if _eligibility_table is None
+            else _eligibility_table
+        )
 
         if _policy is not None:
             self._policy = _policy
         else:
             self._policy = dict()
 
-        self._discount_factor = discount_factor
-        self._eligibility_decay_rate = eligibility_decay_rate
         self._learning_rate = learning_rate
         self._epsilon = initial_epsilon
         self._epsilon_decay_rate = epsilon_decay_rate
         self._use_random_values = use_random_values
 
     @staticmethod
-    def _update(old: Actor, policy, eligibilities):
+    def _update(old: Actor, policy, eligibility_table):
         """
         Returns an updated version of old.
         """
         return Actor(
-            discount_factor=old._discount_factor,
-            eligibility_decay_rate=old._eligibility_decay_rate,
             learning_rate=old._learning_rate,
             initial_epsilon=old._epsilon,
             epsilon_decay_rate=old._epsilon_decay_rate,
             use_random_values=old._use_random_values,
-            _eligibilities=eligibilities,
+            _eligibility_table=eligibility_table,
             _policy=policy,
         )
 
     @staticmethod
-    def _new(old: Actor, eligibilities):
+    def _new(old: Actor, eligibility_table):
         return Actor(
-            discount_factor=old._discount_factor,
-            eligibility_decay_rate=old._eligibility_decay_rate,
             learning_rate=old._learning_rate,
             initial_epsilon=old._epsilon * old._epsilon_decay_rate,
             epsilon_decay_rate=old._epsilon_decay_rate,
             use_random_values=old._use_random_values,
-            _eligibilities=eligibilities,
+            _eligibility_table=eligibility_table,
             _policy=old._policy,
         )
-
-    def _get_eligibility(self, state_action, was_previous):
-        """
-        Get eligibility of a state-action pair
-        """
-        if was_previous:
-            return 1
-
-        return self._eligibilities[str(state_action)]
 
     def _get_action_value(self, state, action):
         """
@@ -117,30 +104,20 @@ class Actor:
             str(state_action): self._get_action_value(state_action[0], state_action[1])
             + self._learning_rate
             * td_error
-            * self._get_eligibility(
-                state_action, was_previous=(state_action == state_actions[-1])
-            )
-            for state_action in state_actions
-        }
-
-        new_eligibilities = {
-            str(state_action): self._discount_factor
-            * self._eligibility_decay_rate
-            * self._get_eligibility(
+            * self._eligibility_table.get_eligibility(
                 state_action, was_previous=(state_action == state_actions[-1])
             )
             for state_action in state_actions
         }
 
         return Actor._update(
-            self, self._policy | new_policy, self._eligibilities | new_eligibilities
+            self,
+            self._policy | new_policy,
+            self._eligibility_table.update_eligibilities(state_actions),
         )
 
     def reset_eligibilities_and_decay_epsilon(self):
         """
         Returns a new instance of the Actor with reset eligibilities and decayed epsilon.
         """
-        return Actor._new(
-            self,
-            eligibilities=dict.fromkeys(self._eligibilities, 0),
-        )
+        return Actor._new(self, eligibility_table=self._eligibility_table.reset())

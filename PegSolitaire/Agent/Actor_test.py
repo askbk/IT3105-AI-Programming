@@ -1,5 +1,6 @@
 import numpy as np
 from Agent.Actor import Actor
+from Agent.EligibilityTable import EligibilityTable
 
 
 def test_constructor():
@@ -26,11 +27,15 @@ def test_update():
     td_error = 1
     actor = Actor(
         initial_epsilon=0,
-        _eligibilities={
-            str(state_action1): 0.9,
-            str(state_action2): 0.8,
-            str(state_action3): 1,
-        },
+        _eligibility_table=EligibilityTable(
+            discount_factor=0.9,
+            eligibility_decay_rate=0.9,
+            _eligibilities={
+                str(state_action1): 0.9,
+                str(state_action2): 0.8,
+                str(state_action3): 1,
+            },
+        ),
     )
     actor = actor.update([state_action1, state_action2, state_action3], td_error)
 
@@ -46,11 +51,15 @@ def test_epsilon_greedy_actor():
     actor = Actor(
         initial_epsilon=epsilon,
         epsilon_decay_rate=1,
-        _eligibilities={
-            str(state_action1): 0.9,
-            str(state_action2): 0.8,
-            str(state_action3): 1,
-        },
+        _eligibility_table=EligibilityTable(
+            discount_factor=0.9,
+            eligibility_decay_rate=0.9,
+            _eligibilities={
+                str(state_action1): 0.9,
+                str(state_action2): 0.8,
+                str(state_action3): 1,
+            },
+        ),
     )
     actor = actor.update([state_action1, state_action2, state_action3], td_error)
     rounds = 10000
