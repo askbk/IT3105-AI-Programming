@@ -219,5 +219,9 @@ class Board:
         return self._hash
 
 
+diamond_3 = Board(size=3, shape="diamond", hole_positions=[Position((0, 0))])
 diamond_4 = Board(size=4, shape="diamond", hole_positions=[Position((2, 1))])
+diamond_5 = Board(size=5, shape="diamond", hole_positions=[Position((2, 1))])
+triangle_3 = Board(size=3, shape="triangle", hole_positions=[Position((0, 0))])
+triangle_4 = Board(size=4, shape="triangle", hole_positions=[Position((0, 0))])
 triangle_5 = Board(size=5, shape="triangle", hole_positions=[Position((1, 1))])
