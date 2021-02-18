@@ -12,7 +12,7 @@ class Player:
         self._agent = agent
 
     def _get_reward(self, remaining):
-        return 10 / remaining - remaining / 2
+        return 10 / remaining - 2.5 * remaining
 
     def play_single_episode(self, board, replay=False, replay_interval=1):
         """

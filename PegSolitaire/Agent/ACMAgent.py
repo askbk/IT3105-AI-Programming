@@ -103,10 +103,23 @@ agent_diamond_4 = ACMAgent(
         "actor_discount_factor": 0.9,
         "actor_eligibility_decay_rate": 0.9,
         "actor_learning_rate": 0.001,
-        "critic_discount_factor": 0.5,
-        "critic_eligibility_decay_rate": 0.5,
-        "critic_learning_rate": 0.001,
+        "critic_discount_factor": 0.4,
+        "critic_eligibility_decay_rate": 0.4,
+        "critic_learning_rate": 0.0001,
         "epsilon_decay_rate": 0.9,
+        "initial_epsilon": 1,
+    }
+)
+
+agent_triangle_5 = ACMAgent(
+    **{
+        "actor_discount_factor": 0.9,
+        "actor_eligibility_decay_rate": 0.9,
+        "actor_learning_rate": 0.01,
+        "critic_discount_factor": 0.6,
+        "critic_eligibility_decay_rate": 0.6,
+        "critic_learning_rate": 0.001,
+        "epsilon_decay_rate": 0.99,
         "initial_epsilon": 1,
     }
 )
@@ -124,4 +137,31 @@ agent_nn_diamond_4 = ACMAgent(
         "epsilon_decay_rate": 0.9,
         "initial_epsilon": 1,
     }
+)
+
+agent_nn_triangle_5 = ACMAgent(
+    **{
+        "actor_discount_factor": 0.9,
+        "actor_eligibility_decay_rate": 0.9,
+        "actor_learning_rate": 0.0001,
+        "critic_discount_factor": 0.6,
+        "critic_eligibility_decay_rate": 0.6,
+        "critic_function": "neural_network",
+        "critic_learning_rate": 1e-06,
+        "critic_nn_dimensions": (15, 8, 1),
+        "epsilon_decay_rate": 0.9,
+        "initial_epsilon": 1,
+    },
+    # **{
+    #     "actor_discount_factor": 0.9,
+    #     "actor_eligibility_decay_rate": 0.9,
+    #     "actor_learning_rate": 0.01,
+    #     "critic_discount_factor": 0.5,
+    #     "critic_eligibility_decay_rate": 0.5,
+    #     "critic_function": "neural_network",
+    #     "critic_learning_rate": 1e-05,
+    #     "critic_nn_dimensions": (15, 8, 1),
+    #     "epsilon_decay_rate": 0.9,
+    #     "initial_epsilon": 1,
+    # }
 )

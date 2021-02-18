@@ -7,6 +7,10 @@ from Agent.SplitGD import SplitGD
 from Agent.FunctionApproximator import FunctionApproximator
 
 
+tf.config.threading.set_inter_op_parallelism_threads(0)
+tf.config.threading.set_intra_op_parallelism_threads(0)
+
+
 class NN(SplitGD):
     def __init__(self, dimensions, learning_rate, calculate_eligibilities):
         self._dimensions = dimensions
@@ -23,7 +27,7 @@ class NN(SplitGD):
 
     def fit(self, batch, targets, td_error):
         self._td_error = td_error
-        super().fit(batch, targets)
+        super().fit(batch, targets, verbosity=0)
 
     def _modify_gradients(self, gradients):
         gradient_matrices = [tensor.numpy() for tensor in gradients]
