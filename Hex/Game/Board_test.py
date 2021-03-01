@@ -65,11 +65,14 @@ def test_win_condition():
             Board(size=3),
         )
 
-    assert not Board().is_finished()
+    assert Board().is_finished() == (False, None)
 
     moves = [(2, 0), (2, 2), (2, 1), (3, 1), (1, 2), (1, 3), (0, 3)]
-    assert reduce(
-        lambda board, move: board.make_move(move),
-        moves,
-        Board(size=4),
-    ).is_finished()
+    assert (
+        reduce(
+            lambda board, move: board.make_move(move),
+            moves,
+            Board(size=4),
+        ).is_finished()
+        == (True, 1)
+    )

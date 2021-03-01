@@ -104,7 +104,7 @@ class Board:
         return reduce(vec2tuples, range(self._size ** 2), [])
 
     def make_move(self, position):
-        if self.is_finished():
+        if self._is_finished():
             raise Exception(f"Game is finished")
 
         if self._is_position_occupied(position):
@@ -121,12 +121,14 @@ class Board:
             self._board_state
         )
 
+    def _is_finished(self):
+        return self.is_finished()[0]
+
     def is_finished(self):
-        # Tree search from each peg on two adjacent sides
         for player in (1, 2):
             for position in self._board_search_start_side(player):
                 if self._is_position_occupied(position, player):
                     if self._board_search(position, player=player, visited={position}):
-                        return True
+                        return True, player
 
-        return False
+        return False, None
