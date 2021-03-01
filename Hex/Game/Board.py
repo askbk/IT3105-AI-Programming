@@ -132,3 +132,55 @@ class Board:
                         return True, player
 
         return False, None
+
+    def get_edge_list(self):
+        """
+        Returns the board as an edge list.
+        """
+
+        def is_valid_edge(edge) -> bool:
+            position_a, position_b = edge
+
+            if position_a == position_b:
+                return False
+
+            if position_b < position_a:
+                return False
+
+            try:
+                return Board._are_positions_adjacent(position_a, position_b)
+            except:
+                return False
+
+        return filter(
+            is_valid_edge,
+            product(
+                Board._get_valid_positions(self._size),
+                Board._get_valid_positions(self._size),
+            ),
+        )
+
+    def get_all_holes(self):
+        """
+        Returns a list of all hole positions.
+        """
+        return list(
+            filter(
+                lambda pos: not self._is_position_occupied(pos),
+                Board._get_valid_positions(self._size),
+            )
+        )
+
+    def get_all_pieces(self):
+        """
+        Returns a list of all piece positions.
+        """
+        return tuple(
+            list(
+                filter(
+                    lambda pos: self._is_position_occupied(pos, player),
+                    Board._get_valid_positions(self._size),
+                )
+            )
+            for player in (1, 2)
+        )
