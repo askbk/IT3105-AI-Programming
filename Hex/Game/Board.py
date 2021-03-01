@@ -17,6 +17,22 @@ class Board:
         return set(product(range(size), range(size)))
 
     @staticmethod
+    def _are_positions_adjacent(position_a, position_b):
+        if position_a[0] == position_b[0]:
+            return abs(position_a[1] - position_b[1]) == 1
+
+        if position_a[1] == position_b[1]:
+            return abs(position_a[0] - position_b[0]) == 1
+
+        if position_a[0] + 1 == position_b[0]:
+            return position_a[1] - 1 == position_b[1]
+
+        if position_a[0] - 1 == position_b[0]:
+            return position_a[1] + 1 == position_b[1]
+
+        return False
+
+    @staticmethod
     def _get_next_player_turn(current_player_turn):
         return 3 - current_player_turn
 
@@ -28,13 +44,12 @@ class Board:
     def _translate_coordinates_to_index(coordinates, board_size):
         return board_size * coordinates[0] + coordinates[1]
 
-    def _is_position_occupied(self, position):
-        return (
-            self._board_state[
-                Board._translate_coordinates_to_index(position, self._size)
-            ]
-            != 0
-        )
+    def _is_position_occupied(self, position, player=None):
+        position_index = Board._translate_coordinates_to_index(position, self._size)
+        if player is None:
+            return self._board_state[position_index] != 0
+
+        return self._board_state[position_index] == player
 
     def _add_occupant(self, position):
         index = Board._translate_coordinates_to_index(position, self._size)
@@ -42,6 +57,42 @@ class Board:
         return tuple(
             occupant if i != index else self._player_turn
             for i, occupant in enumerate(self._board_state)
+        )
+
+    def _board_search_start_side(self, player):
+        if player == 1:
+            return product(range(self._size), [0])
+        if player == 2:
+            return product([0], range(self._size))
+
+        raise ValueError("Invalid player")
+
+    def _board_search_end_side(self, player):
+        if player == 1:
+            return product(range(self._size), [self._size - 1])
+        if player == 2:
+            return product([self._size - 1], range(self._size))
+
+        raise ValueError("Invalid player")
+
+    def _get_neighbors(self, position, player):
+        return set(
+            filter(
+                lambda pos: Board._are_positions_adjacent(position, pos)
+                and self._is_position_occupied(pos, player),
+                Board._get_valid_positions(self._size),
+            )
+        )
+
+    def _board_search(self, position, player, visited):
+        if position in self._board_search_end_side(player=player):
+            return True
+
+        return any(
+            [
+                self._board_search(neighbor, player, visited | {neighbor})
+                for neighbor in self._get_neighbors(position, player) - visited
+            ]
         )
 
     def get_possible_moves(self):
@@ -53,11 +104,11 @@ class Board:
         return reduce(vec2tuples, range(self._size ** 2), [])
 
     def make_move(self, position):
-        if self._is_position_occupied(position):
-            raise ValueError(f"Position {position} is already occupied.")
-
         if self.is_finished():
             raise Exception(f"Game is finished")
+
+        if self._is_position_occupied(position):
+            raise ValueError(f"Position {position} is already occupied.")
 
         return Board(
             size=self._size,
@@ -71,4 +122,11 @@ class Board:
         )
 
     def is_finished(self):
-        raise NotImplementedError
+        # Tree search from each peg on two adjacent sides
+        for player in (1, 2):
+            for position in self._board_search_start_side(player):
+                if self._is_position_occupied(position, player):
+                    if self._board_search(position, player=player, visited={position}):
+                        return True
+
+        return False
