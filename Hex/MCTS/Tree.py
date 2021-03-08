@@ -27,6 +27,9 @@ class Tree:
             self._value + reward,
         )
 
+    def get_state(self):
+        return self._state
+
     def get_value(self):
         return self._value
 

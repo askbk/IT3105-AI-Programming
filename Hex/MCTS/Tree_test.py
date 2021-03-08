@@ -6,6 +6,10 @@ def test_get_value():
     assert Tree(Nim(n=0, k=0)).get_value() == 0
 
 
+def test_get_state():
+    assert Tree(Nim(n=1, k=1)).get_state() == Nim(n=1, k=1)
+
+
 def test_is_visited():
     assert not Tree(Nim(n=0, k=0)).is_visited()
 
