@@ -2,12 +2,15 @@ from Game import GameBase
 
 
 class Tree:
-    def __init__(self, state: GameBase, children=None, visit_count=0, value=0):
+    def __init__(
+        self, state: GameBase, children=None, visit_count=0, value=0, action=None
+    ):
         self._state = state
         self._is_end_state = state.is_end_state_reached()
         self._visit_count = visit_count
         self._value = value
         self._children = children
+        self._action = action
 
     @staticmethod
     def _create_children(root_state: GameBase):
@@ -15,8 +18,8 @@ class Tree:
             return None
 
         return [
-            Tree(root_state.perform_action(move))
-            for move in root_state.get_possible_actions()
+            Tree(root_state.perform_action(action), action=action)
+            for action in root_state.get_possible_actions()
         ]
 
     def increment_visit_count(self, reward=0):
@@ -29,6 +32,9 @@ class Tree:
 
     def get_state(self):
         return self._state
+
+    def get_action(self):
+        return self._action
 
     def get_value(self):
         return self._value
