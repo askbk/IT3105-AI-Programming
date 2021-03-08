@@ -1,8 +1,9 @@
 from itertools import product
 from functools import reduce
+from Game.GameBase import GameBase
 
 
-class Board:
+class Board(GameBase):
     """
     Hex board
     """
