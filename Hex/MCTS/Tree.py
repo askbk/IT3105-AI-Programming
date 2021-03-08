@@ -28,6 +28,7 @@ class Tree:
             self.get_children(),
             self._visit_count + 1,
             self._value + reward,
+            action=self._action,
         )
 
     def get_state(self):
@@ -55,7 +56,13 @@ class Tree:
             updated,
         ]
         new_value = sum([child.get_value() for child in new_children])
-        return Tree(self._state, new_children, self._visit_count + 1, new_value)
+        return Tree(
+            self._state,
+            new_children,
+            self._visit_count + 1,
+            new_value,
+            action=self._action,
+        )
 
     def is_visited(self):
         return self._visit_count > 0
