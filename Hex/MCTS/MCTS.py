@@ -2,6 +2,7 @@ import random
 import math
 from functools import reduce
 from Game import GameBase
+from MCTS import Tree
 
 
 class MCTS:
@@ -31,8 +32,8 @@ class MCTS:
 
     @staticmethod
     def _upper_confidence_bound(parent, child, c=1):
-        return child.get_value() / child.get_visit_count() + c * math.sqrt(
-            math.log(parent.get_visit_count()) / child.get_visit_count()
+        return child.get_value() / (1 + child.get_visit_count()) + c * math.sqrt(
+            math.log(parent.get_visit_count()) / (1 + child.get_visit_count())
         )
 
     @staticmethod
@@ -42,31 +43,33 @@ class MCTS:
         )
 
     @staticmethod
-    def _tree_search(rollout_policy):
-        def perform_rollout(tree):
+    def _tree_search(rollout_policy) -> Tree:
+        def perform_rollout(tree, recursively_called=False) -> int:
             """
             Returns new tree with updated statistics
             """
-            # 1. rollout until end state reached
-            # 2. backpropagate statistics to root node
-            # 3. return updated tree
-            return tree
+            # 1. rollout until end state reached using actor
+            # 2. return reward
+            if not tree.is_end_state():
+                selected_child = rollout_policy(tree.get_children())
 
-        def perform_search(tree):
+                return perform_rollout(selected_child)
+
+            return 1
+
+        def perform_search(tree, game_number) -> Tree:
             """
             Return new tree with updated statistics
             """
             # 1. follow tree policy until unvisited node reached
             # 2. perform rollout from node
-            # 3. return rollout subtree and update
+            # 3. update tree with reward from rollout
             if not tree.is_visited():
-                return perform_rollout(tree)
+                reward = perform_rollout(tree)
+                return tree.increment_visit_count(reward=reward)
 
-            # use Pt to search from root to leaf of MCT and update Bmc with each move
-            # use actor to choose rollout actions from leaf to final state and update Bmc with each move
-            # perform MCTS backprop from final state to root
-            selected_child = MCTS._select_node_tree_policy(tree, tree.get_children)
-            updated_child = perform_search(selected_child)
+            selected_child = MCTS._select_node_tree_policy(tree, tree.get_children())
+            updated_child = perform_search(selected_child, game_number)
             return tree.update_child_node(selected_child, updated_child)
 
         return perform_search
@@ -74,12 +77,19 @@ class MCTS:
     def search(self):
         new_tree = reduce(
             MCTS._tree_search(random.choice),
-            range(self._search_games),
+            range(self._search_games + 1),
             self._tree,
         )
+        distribution = [
+            ((child.get_state(), child.get_action()), child.get_visit_count())
+            for child in new_tree.get_children()
+        ]
 
         return MCTS(
-            search_games=self._search_games, _tree=new_tree, _player=self._player
+            search_games=self._search_games,
+            _tree=new_tree,
+            _player=self._player,
+            _distribution=distribution,
         )
 
     def update_root(self, new_root):

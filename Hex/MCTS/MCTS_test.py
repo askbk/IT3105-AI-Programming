@@ -1,5 +1,5 @@
-from MCTS import MCTS
-from Nim import Nim
+from MCTS import MCTS, Tree
+from MCTS.Nim import Nim
 
 
 def test_MCTS_constructor():
@@ -26,6 +26,7 @@ def test_MCTS_get_root_distribution():
         .search()
         .get_root_distribution()
     )
+
     assert sum([visit_count for SAP, visit_count in dist]) == 100
     assert all(
         [SAP[0] in possible_next_boards and SAP[1] in possible_moves for SAP, _ in dist]
