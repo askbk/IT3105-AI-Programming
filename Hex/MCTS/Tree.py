@@ -45,7 +45,8 @@ class Tree:
             *filter(lambda child: child is not old, self.get_children()),
             updated,
         ]
-        return Tree(self._state, new_children, self._visit_count, self._value)
+        new_value = sum([child.get_value() for child in new_children])
+        return Tree(self._state, new_children, self._visit_count + 1, new_value)
 
     def is_visited(self):
         return self._visit_count > 0
