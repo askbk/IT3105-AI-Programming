@@ -37,27 +37,30 @@ class MCTS:
         )
 
     @staticmethod
-    def _select_node_tree_policy(parent, children):
-        return max(
+    def _select_node_tree_policy(parent, children, player):
+        func = max if player == 1 else min
+        return func(
             children, key=lambda child: MCTS._upper_confidence_bound(parent, child)
         )
 
     @staticmethod
     def _tree_search(rollout_policy) -> Tree:
-        def perform_rollout(tree, recursively_called=False) -> int:
+        def perform_rollout(state: GameBase, player_turn: int) -> int:
             """
             Returns new tree with updated statistics
             """
             # 1. rollout until end state reached using actor
             # 2. return reward
-            if not tree.is_end_state():
-                selected_child = rollout_policy(tree.get_children())
+            if not state.is_end_state_reached():
+                action = rollout_policy(state.get_possible_actions())
 
-                return perform_rollout(selected_child)
+                return perform_rollout(
+                    state.perform_action(action), MCTS._get_next_player(player_turn)
+                )
 
             return 1
 
-        def perform_search(tree, game_number) -> Tree:
+        def perform_search(tree, game_number, player_turn=1) -> Tree:
             """
             Return new tree with updated statistics
             """
@@ -65,11 +68,17 @@ class MCTS:
             # 2. perform rollout from node
             # 3. update tree with reward from rollout
             if not tree.is_visited():
-                reward = perform_rollout(tree)
+                reward = perform_rollout(tree.get_state(), player_turn)
                 return tree.increment_visit_count(reward=reward)
 
-            selected_child = MCTS._select_node_tree_policy(tree, tree.get_children())
-            updated_child = perform_search(selected_child, game_number)
+            selected_child = MCTS._select_node_tree_policy(
+                tree, tree.get_children(), player_turn
+            )
+            updated_child = perform_search(
+                selected_child,
+                game_number,
+                player_turn=MCTS._get_next_player(player_turn),
+            )
             return tree.update_child_node(selected_child, updated_child)
 
         return perform_search
