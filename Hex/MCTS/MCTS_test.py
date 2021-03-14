@@ -44,21 +44,22 @@ def test_MCTS_update_root():
 
 
 def test_nim_playthrough():
-    state = Nim(n=20, k=2)
-    mcts = MCTS(initial_state=state, search_games=100)
+    state = Nim(n=20, k=5)
+    mcts = MCTS(initial_state=state, search_games=1000)
     player_turn = 1
     saps = []
     while True:
         mcts = mcts.search()
-        optimiser = max if player_turn == 1 else min
-        best_action = optimiser(
-            mcts.get_root_distribution(), key=operator.itemgetter(1)
-        )[0][1]
+        best_action = max(mcts.get_root_distribution(), key=operator.itemgetter(1))[0][
+            1
+        ]
         saps.append((state, best_action))
         state = state.perform_action(best_action)
-        player_turn = (player_turn + 1 % 2) + 1
         if state.is_end_state_reached():
             break
+        player_turn = 3 - player_turn
         mcts = mcts.update_root(state)
 
+    print("player", player_turn, "won after", len(saps), "moves")
     saps.append((state, None))
+    print(saps)
