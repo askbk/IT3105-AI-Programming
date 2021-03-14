@@ -39,8 +39,6 @@ class MCTS:
     @staticmethod
     def _select_node_tree_policy(parent, children, player):
         func = max if player == 1 else min
-        if children is None:
-            print(parent)
         return func(
             children, key=lambda child: MCTS._upper_confidence_bound(parent, child)
         )
