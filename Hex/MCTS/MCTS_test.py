@@ -1,5 +1,6 @@
 from MCTS import MCTS, Tree
 from MCTS.Nim import Nim
+import operator
 
 
 def test_MCTS_constructor():
@@ -40,3 +41,24 @@ def test_MCTS_update_root():
         ),
         MCTS,
     )
+
+
+def test_nim_playthrough():
+    state = Nim(n=20, k=2)
+    mcts = MCTS(initial_state=state, search_games=100)
+    player_turn = 1
+    saps = []
+    while True:
+        mcts = mcts.search()
+        optimiser = max if player_turn == 1 else min
+        best_action = optimiser(
+            mcts.get_root_distribution(), key=operator.itemgetter(1)
+        )[0][1]
+        saps.append((state, best_action))
+        state = state.perform_action(best_action)
+        player_turn = (player_turn + 1 % 2) + 1
+        if state.is_end_state_reached():
+            break
+        mcts = mcts.update_root(state)
+
+    saps.append((state, None))

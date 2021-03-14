@@ -39,6 +39,8 @@ class MCTS:
     @staticmethod
     def _select_node_tree_policy(parent, children, player):
         func = max if player == 1 else min
+        if children is None:
+            print(parent)
         return func(
             children, key=lambda child: MCTS._upper_confidence_bound(parent, child)
         )
@@ -67,7 +69,7 @@ class MCTS:
             # 1. follow tree policy until unvisited node reached
             # 2. perform rollout from node
             # 3. update tree with reward from rollout
-            if not tree.is_visited():
+            if not tree.is_visited() or tree.is_end_state():
                 reward = perform_rollout(tree.get_state(), player_turn)
                 return tree.increment_visit_count(reward=reward)
 
@@ -101,5 +103,15 @@ class MCTS:
             _distribution=distribution,
         )
 
-    def update_root(self, new_root):
-        return self
+    def update_root(self, new_root_state):
+        new_tree = next(
+            child
+            for child in self._tree.get_children()
+            if child.get_state() == new_root_state
+        )
+        return MCTS(
+            initial_state=new_tree.get_state(),
+            search_games=self._search_games,
+            _player=MCTS._get_next_player(self._player),
+            _tree=new_tree,
+        )
