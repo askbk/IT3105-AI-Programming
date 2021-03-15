@@ -1,9 +1,16 @@
+from __future__ import annotations
+from typing import Any, List, Optional
 from Game import GameBase
 
 
 class Tree:
     def __init__(
-        self, state: GameBase, children=None, visit_count=0, value=0, action=None
+        self,
+        state: GameBase,
+        children: Tree = None,
+        visit_count=0,
+        value=0,
+        action: Any = None,
     ):
         self._state = state
         self._is_end_state = state.is_end_state_reached()
@@ -13,7 +20,7 @@ class Tree:
         self._action = action
 
     @staticmethod
-    def _create_children(root_state: GameBase):
+    def _create_children(root_state: GameBase) -> List[Tree]:
         if root_state.is_end_state_reached():
             return None
 
@@ -22,7 +29,7 @@ class Tree:
             for action in root_state.get_possible_actions()
         ]
 
-    def increment_visit_count(self, reward=0):
+    def increment_visit_count(self, reward=0) -> Tree:
         return Tree(
             self._state,
             self.get_children(),
@@ -31,26 +38,26 @@ class Tree:
             action=self._action,
         )
 
-    def get_state(self):
+    def get_state(self) -> Any:
         return self._state
 
-    def get_action(self):
+    def get_action(self) -> Any:
         return self._action
 
-    def get_value(self):
+    def get_value(self) -> int:
         return self._value
 
-    def get_visit_count(self):
+    def get_visit_count(self) -> int:
         return self._visit_count
 
-    def get_children(self):
+    def get_children(self) -> Optional[List[Tree]]:
         if self.is_end_state():
             return None
         if self._children is not None:
             return self._children
         return Tree._create_children(self._state)
 
-    def update_child_node(self, old, updated):
+    def update_child_node(self, old: Tree, updated: Tree) -> Tree:
         new_children = [
             *filter(lambda child: child is not old, self.get_children()),
             updated,
@@ -64,15 +71,15 @@ class Tree:
             action=self._action,
         )
 
-    def is_visited(self):
+    def is_visited(self) -> bool:
         return self._visit_count > 0
 
-    def is_fully_expanded(self):
+    def is_fully_expanded(self) -> bool:
         return self.is_end_state() or all(
             [child.is_visited() for child in self.get_children()]
         )
 
-    def is_end_state(self):
+    def is_end_state(self) -> bool:
         return self._is_end_state
 
     def __repr__(self):

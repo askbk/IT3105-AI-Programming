@@ -1,6 +1,8 @@
+from __future__ import annotations
 import random
 import math
 from functools import reduce
+from typing import Callable, Any
 from Game import GameBase
 from MCTS import Tree
 
@@ -12,11 +14,11 @@ class MCTS:
 
     def __init__(
         self,
-        initial_state=None,
+        initial_state: Any = None,
         search_games=100,
         _distribution=[],
         _player=1,
-        _tree=None,
+        _tree: Tree = None,
     ):
         self._distribution = _distribution
         self._search_games = search_games
@@ -24,27 +26,27 @@ class MCTS:
         self._player = _player
 
     @staticmethod
-    def _get_next_player(player):
+    def _get_next_player(player: int) -> int:
         return 3 - player
 
-    def get_root_distribution(self):
+    def get_root_distribution(self) -> list:
         return self._distribution
 
     @staticmethod
-    def _upper_confidence_bound(parent, child, c=1):
+    def _upper_confidence_bound(parent: Tree, child: Tree, c=1) -> float:
         return child.get_value() / (1 + child.get_visit_count()) + c * math.sqrt(
             math.log(parent.get_visit_count()) / (1 + child.get_visit_count())
         )
 
     @staticmethod
-    def _select_node_tree_policy(parent, children, player):
+    def _select_node_tree_policy(parent: Tree, children: Tree, player: int) -> Tree:
         func = max if player == 1 else min
         return func(
             children, key=lambda child: MCTS._upper_confidence_bound(parent, child)
         )
 
     @staticmethod
-    def _tree_search(rollout_policy) -> Tree:
+    def _tree_search(rollout_policy: Callable) -> Tree:
         def perform_rollout(state: GameBase, player_turn: int) -> int:
             """
             Returns new tree with updated statistics
@@ -60,7 +62,7 @@ class MCTS:
 
             return 1
 
-        def perform_search(tree, game_number, player_turn=1) -> Tree:
+        def perform_search(tree: Tree, game_number: int, player_turn=1) -> Tree:
             """
             Return new tree with updated statistics
             """
@@ -83,7 +85,7 @@ class MCTS:
 
         return perform_search
 
-    def search(self):
+    def search(self) -> MCTS:
         new_tree = reduce(
             MCTS._tree_search(random.choice),
             range(self._search_games + 1),
@@ -101,7 +103,7 @@ class MCTS:
             _distribution=distribution,
         )
 
-    def update_root(self, new_root_state):
+    def update_root(self, new_root_state: Any) -> MCTS:
         new_tree = next(
             child
             for child in self._tree.get_children()
