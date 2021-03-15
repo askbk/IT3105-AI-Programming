@@ -34,9 +34,9 @@ class MCTS:
         return self._distribution
 
     @staticmethod
-    def _upper_confidence_bound(parent: Tree, child: Tree, c=1) -> float:
-        return child.get_value() / (1 + child.get_visit_count()) + c * math.sqrt(
-            math.log(parent.get_visit_count()) / (1 + child.get_visit_count())
+    def _upper_confidence_bound(parent: Tree, child: Tree, c=3) -> float:
+        return child.get_value() / (0.01 + child.get_visit_count()) + c * math.sqrt(
+            math.log(parent.get_visit_count()) / (0.01 + child.get_visit_count())
         )
 
     @staticmethod
