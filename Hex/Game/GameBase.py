@@ -19,3 +19,6 @@ class GameBase:
         Returns a boolean indicating whether the game has reached an end state.
         """
         raise NotImplementedError
+
+    def __eq__(self, other):
+        raise NotImplementedError
