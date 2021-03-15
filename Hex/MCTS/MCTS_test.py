@@ -90,6 +90,7 @@ def test_hex_playthrough():
         saps.append((state, best_action))
         state = state.perform_action(best_action)
         if state.is_end_state_reached():
+            saps.append((state, None))
             break
         player_turn = 3 - player_turn
         mcts = mcts.update_root(state)
