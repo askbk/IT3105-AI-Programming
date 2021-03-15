@@ -123,3 +123,6 @@ class MCTS:
             _player=MCTS._get_next_player(self._player),
             _tree=new_tree,
         )
+
+    def __repr__(self):
+        return f"MCTS<root_state={self._tree.get_state()}>"
