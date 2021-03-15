@@ -1,5 +1,6 @@
 from MCTS import MCTS, Tree
 from MCTS.Nim import Nim
+from Game import Board
 
 
 def test_MCTS_constructor():
@@ -75,3 +76,22 @@ def test_nim_playthrough_player_2_wins():
     assert nim_playthrough_winner(12, 5, 1000) == 2
     assert nim_playthrough_winner(14, 6, 1000) == 2
     assert nim_playthrough_winner(24, 7, 1000) == 2
+
+
+def test_hex_playthrough():
+    board_size = 4
+    state = Board(size=board_size)
+    mcts = MCTS(initial_state=state, search_games=100)
+    player_turn = 1
+    saps = []
+    while True:
+        mcts = mcts.search()
+        best_action = mcts.get_best_action()
+        saps.append((state, best_action))
+        state = state.perform_action(best_action)
+        if state.is_end_state_reached():
+            break
+        player_turn = 3 - player_turn
+        mcts = mcts.update_root(state)
+
+    assert len(saps) >= 2 * board_size - 1
