@@ -189,5 +189,12 @@ class Board(GameBase):
     def is_end_state_reached(self):
         return self.is_finished()[0]
 
+    def __eq__(self, other):
+        return (
+            self._size == other._size
+            and self._player_turn == other._player_turn
+            and self._board_state == other._board_state
+        )
+
     def __repr__(self):
         return f"Board<size={self._size}, board_state={self._board_state}, player_turn={self._player_turn}>"

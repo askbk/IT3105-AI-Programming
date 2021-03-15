@@ -8,6 +8,12 @@ def test_board_constructor():
     Board(size=4)
 
 
+def test_equality():
+    assert Board() == Board()
+    assert Board().perform_action((0, 0)) == Board().perform_action((0, 0))
+    assert Board().perform_action((0, 0)) != Board().perform_action((0, 1))
+
+
 def test_board_get_moves():
     assert len(Board(size=3).get_possible_actions()) == 9
     assert Board(size=3).get_possible_actions() == [
