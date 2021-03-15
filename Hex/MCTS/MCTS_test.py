@@ -62,7 +62,7 @@ def test_nim_playthrough_player_1_wins():
     assert nim_playthrough_winner(5, 3, 500) == 1
     assert nim_playthrough_winner(6, 4, 500) == 1
     assert nim_playthrough_winner(7, 5, 500) == 1
-    assert nim_playthrough_winner(13, 6, 1000) == 1
+    assert nim_playthrough_winner(11, 6, 1000) == 1
     assert nim_playthrough_winner(17, 7, 1000) == 1
 
 
