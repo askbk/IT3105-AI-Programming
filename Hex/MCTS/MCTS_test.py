@@ -1,6 +1,5 @@
 from MCTS import MCTS, Tree
 from MCTS.Nim import Nim
-import operator
 
 
 def test_MCTS_constructor():
@@ -15,7 +14,6 @@ def test_MCTS_search():
 
 def test_MCTS_get_root_distribution():
     initial_board = Nim(n=40, k=2)
-    possible_next_boards = [Nim(n=39, k=2), Nim(n=38, k=2)]
     possible_moves = [1, 2]
     assert (
         MCTS(initial_state=initial_board, search_games=100).get_root_distribution()
@@ -28,10 +26,8 @@ def test_MCTS_get_root_distribution():
         .get_root_distribution()
     )
 
-    assert sum([visit_count for SAP, visit_count in dist]) == 100
-    assert all(
-        [SAP[0] in possible_next_boards and SAP[1] in possible_moves for SAP, _ in dist]
-    )
+    assert sum([visit_count for action, visit_count in dist]) == 100
+    assert all([action in possible_moves for action, _ in dist])
 
 
 def test_MCTS_update_root():
@@ -50,9 +46,7 @@ def nim_playthrough_winner(n, k, search_games):
     saps = []
     while True:
         mcts = mcts.search()
-        best_action = max(mcts.get_root_distribution(), key=operator.itemgetter(1))[0][
-            1
-        ]
+        best_action = mcts.get_best_action()
         saps.append((state, best_action))
         state = state.perform_action(best_action)
         if state.is_end_state_reached():

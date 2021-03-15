@@ -1,6 +1,7 @@
 from __future__ import annotations
-import random
 import math
+import random
+import operator
 from functools import reduce
 from typing import Callable, Any
 from Game import GameBase
@@ -92,7 +93,7 @@ class MCTS:
             self._tree,
         )
         distribution = [
-            ((child.get_state(), child.get_action()), child.get_visit_count())
+            (child.get_action(), child.get_visit_count())
             for child in new_tree.get_children()
         ]
 
@@ -101,6 +102,14 @@ class MCTS:
             _tree=new_tree,
             _player=self._player,
             _distribution=distribution,
+        )
+
+    def get_best_action(self):
+        """
+        Returns action most often taken from current state.
+        """
+        return operator.getitem(
+            max(self.get_root_distribution(), key=operator.itemgetter(1)), 0
         )
 
     def update_root(self, new_root_state: Any) -> MCTS:
