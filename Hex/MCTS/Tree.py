@@ -31,11 +31,11 @@ class Tree:
 
     def increment_visit_count(self, reward=0) -> Tree:
         return Tree(
-            self._state,
+            self.get_state(),
             self.get_children(),
-            self._visit_count + 1,
-            self._value + reward,
-            action=self._action,
+            self.get_visit_count() + 1,
+            self.get_value() + reward,
+            action=self.get_action(),
         )
 
     def get_state(self) -> Any:
@@ -50,37 +50,37 @@ class Tree:
     def get_visit_count(self) -> int:
         return self._visit_count
 
-    def get_children(self) -> Optional[List[Tree]]:
+    def get_children(self):
         if self.is_end_state():
             return None
         if self._children is not None:
             return self._children
-        return Tree._create_children(self._state)
+        return Tree._create_children(self.get_state())
 
     def update_child_node(self, old: Tree, updated: Tree) -> Tree:
         new_children = [
             *filter(lambda child: child is not old, self.get_children()),
             updated,
         ]
-        new_value = sum([child.get_value() for child in new_children])
+        new_value = sum(child.get_value() for child in new_children)
         return Tree(
-            self._state,
+            self.get_state(),
             new_children,
-            self._visit_count + 1,
+            self.get_visit_count() + 1,
             new_value,
-            action=self._action,
+            action=self.get_action(),
         )
 
     def is_visited(self) -> bool:
-        return self._visit_count > 0
+        return self.get_visit_count() > 0
 
     def is_fully_expanded(self) -> bool:
         return self.is_end_state() or all(
-            [child.is_visited() for child in self.get_children()]
+            child.is_visited() for child in self.get_children()
         )
 
     def is_end_state(self) -> bool:
         return self._is_end_state
 
     def __repr__(self):
-        return f"Tree<state={self._state}, is_end_state={self.is_end_state()}, visit_count={self.get_visit_count()}, value={self.get_value()}>"
+        return f"Tree<state={self.get_state()}, is_end_state={self.is_end_state()}, visit_count={self.get_visit_count()}, value={self.get_value()}>"
