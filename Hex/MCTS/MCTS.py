@@ -49,7 +49,7 @@ class MCTS:
     def _tree_search(rollout_policy: Callable) -> Tree:
         def perform_rollout(state: GameBase, player_turn: int) -> int:
             """
-            Returns new tree with updated statistics
+            Returns reward from rollout.
             """
             # 1. rollout until end state reached using actor
             # 2. return reward
@@ -64,7 +64,7 @@ class MCTS:
 
         def perform_search(tree: Tree, game_number: int, player_turn=1) -> Tree:
             """
-            Return new tree with updated statistics
+            Return new tree with updated statistics.
             """
             # 1. follow tree policy until unvisited node reached
             # 2. perform rollout from node

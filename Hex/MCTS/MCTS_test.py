@@ -43,9 +43,9 @@ def test_MCTS_update_root():
     )
 
 
-def test_nim_playthrough():
-    state = Nim(n=20, k=5)
-    mcts = MCTS(initial_state=state, search_games=1000)
+def nim_playthrough_winner(n, k, search_games):
+    state = Nim(n=n, k=k)
+    mcts = MCTS(initial_state=state, search_games=search_games)
     player_turn = 1
     saps = []
     while True:
@@ -56,10 +56,28 @@ def test_nim_playthrough():
         saps.append((state, best_action))
         state = state.perform_action(best_action)
         if state.is_end_state_reached():
-            break
+            return player_turn
         player_turn = 3 - player_turn
         mcts = mcts.update_root(state)
 
-    print("player", player_turn, "won after", len(saps), "moves")
-    saps.append((state, None))
-    print(saps)
+
+def test_nim_playthrough_player_1_wins():
+    # n != 0 (mod k+1)
+    assert nim_playthrough_winner(3, 1, 500) == 1
+    assert nim_playthrough_winner(5, 2, 500) == 1
+    assert nim_playthrough_winner(5, 3, 500) == 1
+    assert nim_playthrough_winner(6, 4, 500) == 1
+    assert nim_playthrough_winner(7, 5, 500) == 1
+    assert nim_playthrough_winner(13, 6, 1000) == 1
+    assert nim_playthrough_winner(17, 7, 1000) == 1
+
+
+def test_nim_playthrough_player_2_wins():
+    # n = 0 (mod k+1)
+    assert nim_playthrough_winner(2, 1, 500) == 2
+    assert nim_playthrough_winner(6, 2, 500) == 2
+    assert nim_playthrough_winner(8, 3, 500) == 2
+    assert nim_playthrough_winner(5, 4, 500) == 2
+    assert nim_playthrough_winner(12, 5, 1000) == 2
+    assert nim_playthrough_winner(14, 6, 1000) == 2
+    assert nim_playthrough_winner(24, 7, 1000) == 2
