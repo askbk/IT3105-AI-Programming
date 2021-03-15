@@ -54,14 +54,13 @@ class MCTS:
             """
             # 1. rollout until end state reached using actor
             # 2. return reward
-            if not state.is_end_state_reached():
-                action = rollout_policy(state.get_possible_actions())
+            if state.is_end_state_reached():
+                return 1 if player_turn == 1 else -1
 
-                return perform_rollout(
-                    state.perform_action(action), MCTS._get_next_player(player_turn)
-                )
-
-            return 1 if player_turn == 1 else -1
+            return perform_rollout(
+                state.perform_action(rollout_policy(state.get_possible_actions())),
+                MCTS._get_next_player(player_turn),
+            )
 
         def perform_search(tree: Tree, game_number: int, player_turn=1) -> Tree:
             """
