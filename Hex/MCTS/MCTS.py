@@ -60,7 +60,7 @@ class MCTS:
                     state.perform_action(action), MCTS._get_next_player(player_turn)
                 )
 
-            return 1
+            return 1 if player_turn == 1 else -1
 
         def perform_search(tree: Tree, game_number: int, player_turn=1) -> Tree:
             """
