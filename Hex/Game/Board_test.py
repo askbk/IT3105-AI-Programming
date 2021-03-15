@@ -9,8 +9,8 @@ def test_board_constructor():
 
 
 def test_board_get_moves():
-    assert len(Board(size=3).get_possible_moves()) == 9
-    assert Board(size=3).get_possible_moves() == [
+    assert len(Board(size=3).get_possible_actions()) == 9
+    assert Board(size=3).get_possible_actions() == [
         (0, 0),
         (0, 1),
         (0, 2),
@@ -23,11 +23,11 @@ def test_board_get_moves():
     ]
 
 
-def test_board_make_move():
+def test_board_perform_action():
     with pytest.raises(ValueError):
-        Board(size=3).make_move((0, 0)).make_move((0, 0))
+        Board(size=3).perform_action((0, 0)).perform_action((0, 0))
 
-    assert Board(size=3).make_move((0, 0)).get_possible_moves() == [
+    assert Board(size=3).perform_action((0, 0)).get_possible_actions() == [
         (0, 1),
         (0, 2),
         (1, 0),
@@ -41,7 +41,7 @@ def test_board_make_move():
 
 def test_vectorized_board():
     assert Board(size=3).get_tuple_representation() == (2, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-    assert Board(size=3).make_move((0, 0)).make_move(
+    assert Board(size=3).perform_action((0, 0)).perform_action(
         (0, 1)
     ).get_tuple_representation() == (
         2,
@@ -60,7 +60,7 @@ def test_vectorized_board():
 def test_win_condition():
     with pytest.raises(Exception):
         reduce(
-            lambda board, move: board.make_move(move),
+            lambda board, move: board.perform_action(move),
             product(range(3), range(3)),
             Board(size=3),
         )
@@ -70,7 +70,7 @@ def test_win_condition():
     moves = [(2, 0), (2, 2), (2, 1), (3, 1), (1, 2), (1, 3), (0, 3)]
     assert (
         reduce(
-            lambda board, move: board.make_move(move),
+            lambda board, move: board.perform_action(move),
             moves,
             Board(size=4),
         ).is_finished()

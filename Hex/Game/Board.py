@@ -96,7 +96,7 @@ class Board(GameBase):
             ]
         )
 
-    def get_possible_moves(self):
+    def get_possible_actions(self):
         def vec2tuples(acc, index):
             if self._board_state[index]:
                 return acc
@@ -104,7 +104,7 @@ class Board(GameBase):
 
         return reduce(vec2tuples, range(self._size ** 2), [])
 
-    def make_move(self, position):
+    def perform_action(self, position):
         if self._is_finished():
             raise Exception(f"Game is finished")
 
@@ -187,4 +187,4 @@ class Board(GameBase):
         )
 
     def is_end_state_reached(self):
-        return self.is_finished()
+        return self.is_finished()[0]
