@@ -118,7 +118,6 @@ class MCTS:
             if child.get_state() == new_root_state
         )
         return MCTS(
-            initial_state=new_tree.get_state(),
             search_games=self._search_games,
             _player=MCTS._get_next_player(self._player),
             _tree=new_tree,
