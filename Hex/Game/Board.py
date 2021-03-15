@@ -185,3 +185,6 @@ class Board(GameBase):
             )
             for player in (1, 2)
         )
+
+    def is_end_state_reached(self):
+        return self.is_finished()
