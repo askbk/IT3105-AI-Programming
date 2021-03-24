@@ -17,10 +17,10 @@ class Player:
         """
         docstring
         """
-        return self
+        return Player()
 
     def end_of_episode_update(self):
         """
         docstring
         """
-        return self
+        return Player()
