@@ -88,9 +88,6 @@ class ACMAgent:
         return action
 
     def end_state_reached(self, state, reward):
-        """
-        docstring
-        """
         self._run_updates(state, reward)
         self._critic = self._critic.reset_eligibilities()
         self._actor = self._actor.reset_eligibilities_and_decay_epsilon()

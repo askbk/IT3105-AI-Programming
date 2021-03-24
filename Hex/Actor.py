@@ -4,9 +4,6 @@ import tensorflow.keras as keras
 
 class Actor:
     def __init__(self):
-        """
-        docstring
-        """
         inputs = keras.layers.Input(shape=(10,))
         self._nn = keras.Model(
             inputs=inputs,
