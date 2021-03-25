@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from Agent.Critic import Critic
+from PegSolitaire.Agent import Critic
 
 
 def test_constructor():

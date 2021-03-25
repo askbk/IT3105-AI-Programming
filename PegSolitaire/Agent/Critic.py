@@ -1,9 +1,11 @@
 from __future__ import annotations
 import random
 from typing import Tuple, List, Dict, Any, Optional
-from Agent.TableFunctionApproximator import TableFunctionApproximator
-from Agent.NNFunctionApproximator import NNFunctionApproximator
-from Agent.FunctionApproximator import FunctionApproximator
+from PegSolitaire.Agent import (
+    TableFunctionApproximator,
+    NNFunctionApproximator,
+    FunctionApproximator,
+)
 
 
 class Critic:

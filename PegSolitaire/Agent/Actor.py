@@ -2,7 +2,7 @@ from __future__ import annotations
 import random
 from functools import reduce
 from itertools import product
-from Agent.EligibilityTable import EligibilityTable
+from PegSolitaire.Agent import EligibilityTable
 
 
 class Actor:

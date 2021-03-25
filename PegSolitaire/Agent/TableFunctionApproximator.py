@@ -1,7 +1,6 @@
 import random
 from typing import List, Any
-from Agent.FunctionApproximator import FunctionApproximator
-from Agent.EligibilityTable import EligibilityTable
+from PegSolitaire.Agent import FunctionApproximator, EligibilityTable
 
 
 class TableFunctionApproximator(FunctionApproximator):

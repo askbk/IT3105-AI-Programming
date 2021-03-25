@@ -1,7 +1,6 @@
 import random
 from typing import List
-from Agent.Actor import Actor
-from Agent.Critic import Critic
+from PegSolitaire.Agent import Actor, Critic
 
 
 class ACMAgent:

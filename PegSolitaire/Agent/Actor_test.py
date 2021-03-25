@@ -1,6 +1,5 @@
 import numpy as np
-from Agent.Actor import Actor
-from Agent.EligibilityTable import EligibilityTable
+from PegSolitaire.Agent import Actor, EligibilityTable
 
 
 def test_constructor():

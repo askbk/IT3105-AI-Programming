@@ -2,8 +2,7 @@ from networkx.algorithms.operators import union
 from networkx import Graph
 from networkx.drawing.nx_pylab import draw, draw_networkx_nodes, draw_networkx_edges
 from networkx.drawing.layout import rescale_layout
-from Game.Board import Board
-from Game.Position import Position
+from PegSolitaire.Game import Board, Position
 from typing import Tuple, List, Dict
 from functools import reduce
 import matplotlib.pyplot as plt

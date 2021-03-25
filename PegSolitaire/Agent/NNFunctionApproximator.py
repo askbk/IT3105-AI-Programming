@@ -3,8 +3,7 @@ import tensorflow as tf
 from functools import reduce
 from tensorflow import keras
 from tensorflow.keras import layers
-from Agent.SplitGD import SplitGD
-from Agent.FunctionApproximator import FunctionApproximator
+from PegSolitaire.Agent import SplitGD, FunctionApproximator
 
 
 tf.config.threading.set_inter_op_parallelism_threads(0)

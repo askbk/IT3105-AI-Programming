@@ -1,6 +1,5 @@
 import pytest
-from Game.Position import Position
-from Game.Board import Board
+from PegSolitaire.Game import Position, Board
 
 
 def test_position_constructor():

@@ -2,7 +2,7 @@ import numpy as np
 from typing import List, Tuple, Set
 from itertools import product, accumulate, chain
 from functools import reduce, lru_cache
-from Game.Position import Position
+from PegSolitaire.Game import Position
 
 
 class Board:

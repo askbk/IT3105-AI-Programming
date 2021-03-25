@@ -2,7 +2,7 @@ import random
 import numpy as np
 from itertools import accumulate
 from functools import reduce
-from Agent.ACMAgent import ACMAgent
+from PegSolitaire.Agent import ACMAgent
 
 
 def test_agent_constructor():
