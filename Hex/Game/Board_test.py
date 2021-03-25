@@ -1,7 +1,7 @@
 import pytest
 from functools import reduce
 from itertools import product
-from Game import Board
+from Hex.Game import Board
 
 
 def test_board_constructor():

@@ -1,5 +1,5 @@
-from MCTS import Tree
-from MCTS.Nim import Nim
+from Hex.MCTS import Tree
+from Hex.MCTS.Nim import Nim
 
 
 def test_get_value():

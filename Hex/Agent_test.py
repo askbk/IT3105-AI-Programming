@@ -1,5 +1,5 @@
-from MCTS.Nim import Nim
-from Agent import Agent
+from Hex.MCTS.Nim import Nim
+from Hex.Agent import Agent
 
 
 def test_agent_get_action():

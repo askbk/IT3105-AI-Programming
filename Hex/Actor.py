@@ -16,3 +16,6 @@ class Actor:
                 inputs,
             ),
         )
+
+    def rollout(self, state):
+        return self._nn(state)

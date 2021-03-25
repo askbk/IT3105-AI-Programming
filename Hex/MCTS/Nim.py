@@ -1,5 +1,5 @@
 import random
-from Game import GameBase
+from Hex.Game import GameBase
 
 
 class Nim(GameBase):

@@ -1,7 +1,7 @@
 import random
-from Game import GameBase
-from Actor import Actor
-from MCTS import MCTS
+from Hex.Game import GameBase
+from Hex.Actor import Actor
+from Hex.MCTS import MCTS
 
 
 class Agent:
@@ -28,6 +28,13 @@ class Agent:
             return None
 
         return MCTS(initial_state=initial_state).search()
+
+    @staticmethod
+    def _rollout_policy(actor: Actor):
+        def rollout(state: GameBase):
+            probability_distribution = actor.state.get_tuple_representation()
+
+        return rollout
 
     def get_action(self, current_state: GameBase):
         if random.random() < self._epsilon:

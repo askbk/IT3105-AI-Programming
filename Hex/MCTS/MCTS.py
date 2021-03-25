@@ -4,8 +4,8 @@ import random
 import operator
 from functools import reduce
 from typing import Callable, Any
-from Game import GameBase
-from MCTS import Tree
+from Hex.Game import GameBase
+from Hex.MCTS import Tree
 
 
 class MCTS:

@@ -1,6 +1,6 @@
-from MCTS import MCTS, Tree
-from MCTS.Nim import Nim
-from Game import Board
+from Hex.MCTS import MCTS, Tree
+from Hex.MCTS.Nim import Nim
+from Hex.Game import Board
 
 
 def test_MCTS_constructor():

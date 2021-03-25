@@ -1,2 +1,2 @@
-from MCTS.Tree import Tree
-from MCTS.MCTS import MCTS
+from Hex.MCTS.Tree import Tree
+from Hex.MCTS.MCTS import MCTS

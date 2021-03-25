@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any, List, Optional
-from Game import GameBase
+from Hex.Game import GameBase
 
 
 class Tree:
