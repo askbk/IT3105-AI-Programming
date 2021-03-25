@@ -6,7 +6,7 @@ from Agent import Agent
 
 class Player:
     def __init__(self, _agent: AgentBase = None):
-        self._agent = Agent() if _agent is None else _agent
+        self._agent = Agent(initial_state=None) if _agent is None else _agent
 
     def _play_single_episode(self, initial_game_board: GameBase):
         def condition(game_state):
@@ -17,9 +17,14 @@ class Player:
             state_sequence, agent = state
             current_state = state_sequence[-1]
             next_state = current_state.perform_action(agent.get_action(current_state))
-            return [*state_sequence, next_state], agent.next_state(next_state)
+            return [*state_sequence, next_state], agent.next_state(
+                next_state, initial=False
+            )
 
-        initial = ([initial_game_board], self._agent)
+        initial = (
+            [initial_game_board],
+            self._agent.next_state(initial_game_board, initial=True),
+        )
 
         state_sequence, agent = while_loop(condition, initial, step)
 
