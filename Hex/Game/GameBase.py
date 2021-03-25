@@ -20,5 +20,11 @@ class GameBase:
         """
         raise NotImplementedError
 
+    def get_tuple_representation(self) -> tuple:
+        """
+        Returns a tuple representation of the current game state.
+        """
+        raise NotImplementedError
+
     def __eq__(self, other):
         raise NotImplementedError
