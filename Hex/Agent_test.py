@@ -21,6 +21,12 @@ def test_end_of_episode_update():
     assert not current_agent.end_of_episode_update() is current_agent
 
 
+def test_lazy_initialization():
+    agent = Agent(initial_state=None)
+
+    agent.next_state(Nim(n=5, k=3), initial=True)
+
+
 def test_nim_playthrough_player_1_wins():
     state = Nim(n=7, k=3)
     agent = Agent(initial_state=state)
