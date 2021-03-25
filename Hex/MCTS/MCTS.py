@@ -58,7 +58,7 @@ class MCTS:
                 return 1 if player_turn == 1 else -1
 
             return perform_rollout(
-                state.perform_action(rollout_policy(state.get_possible_actions())),
+                state.perform_action(rollout_policy(state)),
                 MCTS._get_next_player(player_turn),
             )
 
@@ -85,12 +85,14 @@ class MCTS:
 
         return perform_search
 
-    def search(self) -> MCTS:
+    def search(
+        self, rollout_policy=lambda state: random.choice(state.get_possible_actions())
+    ) -> MCTS:
         if self._tree.is_end_state():
             return self
 
         new_tree = reduce(
-            MCTS._tree_search(random.choice),
+            MCTS._tree_search(rollout_policy),
             range(self._search_games + 1),
             self._tree,
         )
