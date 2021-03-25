@@ -3,7 +3,8 @@ from Utils import while_loop
 from AgentBase import AgentBase
 from Agent import Agent
 
-class Player():
+
+class Player:
     def __init__(self, _agent: AgentBase = None):
         self._agent = Agent() if _agent is None else _agent
 
