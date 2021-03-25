@@ -46,11 +46,11 @@ def test_board_perform_action():
 
 
 def test_vectorized_board():
-    assert Board(size=3).get_tuple_representation() == (2, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    assert Board(size=3).get_tuple_representation() == (1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     assert Board(size=3).perform_action((0, 0)).perform_action(
         (0, 1)
     ).get_tuple_representation() == (
-        2,
+        1,
         1,
         2,
         0,

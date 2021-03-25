@@ -118,9 +118,7 @@ class Board(GameBase):
         )
 
     def get_tuple_representation(self):
-        return (self._get_next_player_turn(self._player_turn),) + tuple(
-            self._board_state
-        )
+        return (self._player_turn,) + tuple(self._board_state)
 
     def _is_finished(self):
         return self.is_finished()[0]
