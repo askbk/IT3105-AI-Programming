@@ -19,4 +19,7 @@ class Actor:
         )
 
     def rollout(self, state_vector):
-        return self._nn(np.atleast_2d(np.array(state_vector)))
+        return self._nn(np.atleast_2d(np.array(state_vector))).numpy().flatten()
+
+    def train(self, replay_buffer):
+        return self
