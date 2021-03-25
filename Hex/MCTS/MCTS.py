@@ -86,6 +86,9 @@ class MCTS:
         return perform_search
 
     def search(self) -> MCTS:
+        if self._tree.is_end_state():
+            return self
+
         new_tree = reduce(
             MCTS._tree_search(random.choice),
             range(self._search_games + 1),
