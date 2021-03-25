@@ -1,6 +1,4 @@
-from Game.Position import Position
-from Game.Board import Board
-from Game.BoardDisplay import BoardDisplay
+from PegSolitaire.Game import Position, Board, BoardDisplay
 
 
 class Player:
