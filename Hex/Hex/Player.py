@@ -1,7 +1,7 @@
-from Game import GameBase
-from Utils import while_loop
-from AgentBase import AgentBase
-from Agent import Agent
+from Hex.Game import GameBase
+from Hex.Utils import while_loop
+from Hex.AgentBase import AgentBase
+from Hex.Agent import Agent
 
 
 class Player:

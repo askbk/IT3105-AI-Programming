@@ -1,5 +1,5 @@
 from __future__ import annotations
-from Game import GameBase
+from Hex.Game import GameBase
 
 
 class AgentBase:
