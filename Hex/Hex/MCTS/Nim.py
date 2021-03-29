@@ -28,6 +28,9 @@ class Nim(GameBase):
     def get_tuple_representation(self):
         return (self._player_turn, self._n)
 
+    def index_to_action(self, index):
+        return index + 1
+
     def __eq__(self, other):
         return self._n == other._n and self._k == other._k
 
