@@ -40,6 +40,12 @@ class Board(GameBase):
     def index_to_action(self, index):
         return Board._translate_index_to_coordinates(index, self._size)
 
+    def get_state_size(self):
+        return self._size ** 2 + 1
+
+    def get_action_space_size(self):
+        return self._size ** 2
+
     @staticmethod
     def _translate_index_to_coordinates(index, board_size):
         return (index // board_size, index % board_size)

@@ -5,7 +5,10 @@ from Hex.Game import Board
 
 
 def test_board_constructor():
-    Board(size=4)
+    board = Board(size=4)
+    # state_size = board_size + 1 for player turn
+    assert board.get_state_size() == 17
+    assert board.get_action_space_size() == 16
 
 
 def test_equality():
