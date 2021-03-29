@@ -37,6 +37,9 @@ class Board(GameBase):
     def _get_next_player_turn(current_player_turn):
         return 3 - current_player_turn
 
+    def index_to_action(self, index):
+        return Board._translate_index_to_coordinates(index, self._size)
+
     @staticmethod
     def _translate_index_to_coordinates(index, board_size):
         return (index // board_size, index % board_size)

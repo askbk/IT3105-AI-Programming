@@ -26,5 +26,11 @@ class GameBase:
         """
         raise NotImplementedError
 
+    def index_to_action(self, index):
+        """
+        Returns the action corresponding to the given index.
+        """
+        raise NotImplementedError
+
     def __eq__(self, other):
         raise NotImplementedError

@@ -82,3 +82,13 @@ def test_win_condition():
         ).is_finished()
         == (True, 1)
     )
+
+
+def test_index_to_action():
+    size = 4
+    board = Board(size=size)
+    actions = [board.index_to_action(index) for index in range(size ** 2)]
+    possible_actions = board.get_possible_actions()
+
+    assert len(actions) == len(possible_actions)
+    assert all(action in possible_actions for action in actions)
