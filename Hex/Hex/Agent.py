@@ -46,10 +46,9 @@ class Agent:
                 (probability, state.index_to_action(index))
                 for index, probability in enumerate(probability_distribution)
             ]
-            possible_actions = state.get_possible_actions()
             possible_action_probabilities = filter(
                 lambda probability_action: getitem(probability_action, 1)
-                in possible_actions,
+                in state.get_possible_actions(),
                 action_probabilities,
             )
 
@@ -62,14 +61,12 @@ class Agent:
             return random.choice(current_state.get_possible_actions())
         return self._mcts.get_best_action()
 
-    def next_state(self, next_state: GameBase, initial: bool):
+    def next_state(self, next_state: GameBase):
         return Agent(
             initial_state=next_state,
             state_size=self._state_size,
             action_space_size=self._action_space_size,
-            _mcts=None
-            if initial
-            else self._mcts.update_root(next_state).search(
+            _mcts=self._mcts.update_root(next_state).search(
                 rollout_policy=Agent._rollout_policy(self._actor)
             ),
         )

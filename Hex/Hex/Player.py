@@ -5,10 +5,19 @@ from Hex.Agent import Agent
 
 
 class Player:
-    def __init__(self, _agent: AgentBase = None):
-        self._agent = Agent(initial_state=None) if _agent is None else _agent
+    def __init__(self, game: GameBase, _agent: AgentBase = None):
+        self._game = game
+        self._agent = (
+            Agent(
+                initial_state=game,
+                state_size=game.get_state_size(),
+                action_space_size=game.get_action_space_size(),
+            )
+            if _agent is None
+            else _agent
+        )
 
-    def _play_single_episode(self, initial_game_board: GameBase):
+    def _play_single_episode(self):
         def condition(game_state):
             state_sequence, _ = game_state
             return not state_sequence[-1].is_end_state_reached()
@@ -22,13 +31,13 @@ class Player:
             )
 
         initial = (
-            [initial_game_board],
-            self._agent.next_state(initial_game_board, initial=True),
+            [self._game],
+            self._agent,
         )
 
         state_sequence, agent = while_loop(condition, initial, step)
 
         return state_sequence, agent.end_of_episode_update()
 
-    def play_episodes(self, initial_game_board: GameBase, episode_count=1):
-        self._play_single_episode(initial_game_board)
+    def play_episodes(self, episode_count=1):
+        self._play_single_episode()
