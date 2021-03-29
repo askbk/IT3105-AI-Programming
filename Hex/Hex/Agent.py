@@ -1,8 +1,11 @@
+from __future__ import annotations
 import random
+from typing import Optional, Callable
 from operator import getitem, itemgetter
 from Hex.Game import GameBase
 from Hex.Actor import Actor
 from Hex.MCTS import MCTS
+from Hex.Types import ReplayBuffer, Action, RolloutPolicy
 
 
 class Agent:
@@ -12,9 +15,9 @@ class Agent:
         action_space_size: int,
         initial_state=None,
         epsilon: float = 0,
-        _replay_buffer=None,
-        _actor=None,
-        _mcts=None,
+        _replay_buffer: Optional[ReplayBuffer] = None,
+        _actor: Optional[Actor] = None,
+        _mcts: Optional[MCTS] = None,
     ):
         self._replay_buffer = [] if _replay_buffer is None else _replay_buffer
         self._actor = (
@@ -29,7 +32,9 @@ class Agent:
         self._action_space_size = action_space_size
 
     @staticmethod
-    def _initialize_mcts(initial_state, mcts):
+    def _initialize_mcts(
+        initial_state: Optional[GameBase], mcts: MCTS
+    ) -> Optional[MCTS]:
         if mcts is not None:
             return mcts
 
@@ -39,8 +44,8 @@ class Agent:
         return MCTS(initial_state=initial_state).search()
 
     @staticmethod
-    def _rollout_policy(actor: Actor):
-        def rollout(state: GameBase):
+    def _rollout_policy(actor: Actor) -> RolloutPolicy:
+        def rollout(state: GameBase) -> Action:
             probability_distribution = actor.rollout(state.get_tuple_representation())
             action_probabilities = [
                 (probability, state.index_to_action(index))
@@ -56,12 +61,12 @@ class Agent:
 
         return rollout
 
-    def get_action(self, current_state: GameBase):
+    def get_action(self, current_state: GameBase) -> Action:
         if random.random() < self._epsilon:
             return random.choice(current_state.get_possible_actions())
         return self._mcts.get_best_action()
 
-    def next_state(self, next_state: GameBase):
+    def next_state(self, next_state: GameBase) -> Agent:
         return Agent(
             initial_state=next_state,
             state_size=self._state_size,
@@ -71,7 +76,7 @@ class Agent:
             ),
         )
 
-    def end_of_episode_update(self):
+    def end_of_episode_update(self) -> Agent:
         return Agent(
             initial_state=self._initial_state,
             state_size=self._state_size,

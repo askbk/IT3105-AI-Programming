@@ -1,9 +1,10 @@
 from __future__ import annotations
 from Hex.Game import GameBase
+from Hex.Types import Action
 
 
 class AgentBase:
-    def get_next_action(self, current_state: GameBase):
+    def get_next_action(self, current_state: GameBase) -> Action:
         """
         Returns next action to perform.
         """

@@ -2,11 +2,7 @@ from __future__ import annotations
 from functools import reduce
 import tensorflow.keras as keras
 import numpy as np
-from typing import Union, Tuple
-from collections.abc import Sequence
-
-StateVector = Union[np.array, Sequence]
-ProbabilityDistribution = Union[np.array, Sequence]
+from Hex.Types import StateVector, ProbabilityDistribution, ReplayBuffer
 
 
 class Actor:
@@ -27,7 +23,5 @@ class Actor:
     def rollout(self, state_vector: StateVector) -> np.array:
         return self._nn(np.atleast_2d(np.array(state_vector))).numpy().flatten()
 
-    def train(
-        self, replay_buffer: Tuple[StateVector, ProbabilityDistribution]
-    ) -> Actor:
+    def train(self, replay_buffer: ReplayBuffer) -> Actor:
         return self

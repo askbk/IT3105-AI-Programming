@@ -1,3 +1,4 @@
+from typing import Optional
 from Hex.Game import GameBase
 from Hex.Utils import while_loop
 from Hex.AgentBase import AgentBase
@@ -5,7 +6,7 @@ from Hex.Agent import Agent
 
 
 class Player:
-    def __init__(self, game: GameBase, _agent: AgentBase = None):
+    def __init__(self, game: GameBase, _agent: Optional[AgentBase] = None):
         self._game = game
         self._agent = (
             Agent(
@@ -39,5 +40,5 @@ class Player:
 
         return state_sequence, agent.end_of_episode_update()
 
-    def play_episodes(self, episode_count=1):
+    def play_episodes(self, episode_count: int = 1):
         self._play_single_episode()
