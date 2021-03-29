@@ -1,10 +1,16 @@
+from __future__ import annotations
 from functools import reduce
 import tensorflow.keras as keras
 import numpy as np
+from typing import Union, Tuple
+from collections.abc import Sequence
+
+StateVector = Union[np.array, Sequence]
+ProbabilityDistribution = Union[np.array, Sequence]
 
 
 class Actor:
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size: int, output_size: int):
         inputs = keras.layers.Input(shape=(input_size,))
         self._nn = keras.Model(
             inputs=inputs,
@@ -18,8 +24,10 @@ class Actor:
             ),
         )
 
-    def rollout(self, state_vector):
+    def rollout(self, state_vector: StateVector) -> np.array:
         return self._nn(np.atleast_2d(np.array(state_vector))).numpy().flatten()
 
-    def train(self, replay_buffer):
+    def train(
+        self, replay_buffer: Tuple[StateVector, ProbabilityDistribution]
+    ) -> Actor:
         return self
