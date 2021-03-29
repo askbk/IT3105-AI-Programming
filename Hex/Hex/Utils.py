@@ -1,7 +1,7 @@
 from typing import Callable, Any
 
 
-def while_loop(condition: Callable, initialState: Any, body: Callable):
+def while_loop(condition: Callable[Any, bool], initialState: Any, body: Callable):
     if not condition(initialState):
         return initialState
 

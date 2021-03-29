@@ -1,6 +1,10 @@
+from __future__ import annotations
 from itertools import product
 from functools import reduce
 from Hex.Game.GameBase import GameBase
+from typing import Optional, Tuple
+
+Position = Tuple[int, int]
 
 
 class Board(GameBase):
@@ -8,17 +12,17 @@ class Board(GameBase):
     Hex board
     """
 
-    def __init__(self, size=4, _board_state=None, _player_turn=None):
+    def __init__(self, size=4, _board_state=None, _player_turn: Optional[int] = None):
         self._size = size
         self._board_state = (0,) * size ** 2 if _board_state is None else _board_state
         self._player_turn = 1 if _player_turn is None else _player_turn
 
     @staticmethod
-    def _get_valid_positions(size):
+    def _get_valid_positions(size: int):
         return set(product(range(size), range(size)))
 
     @staticmethod
-    def _are_positions_adjacent(position_a, position_b):
+    def _are_positions_adjacent(position_a: Position, position_b: Position) -> bool:
         if position_a[0] == position_b[0]:
             return abs(position_a[1] - position_b[1]) == 1
 
@@ -34,34 +38,36 @@ class Board(GameBase):
         return False
 
     @staticmethod
-    def _get_next_player_turn(current_player_turn):
+    def _get_next_player_turn(current_player_turn: int) -> int:
         return 3 - current_player_turn
 
-    def index_to_action(self, index):
+    def index_to_action(self, index: int) -> Action:
         return Board._translate_index_to_coordinates(index, self._size)
 
-    def get_state_size(self):
+    def get_state_size(self) -> int:
         return self._size ** 2 + 1
 
-    def get_action_space_size(self):
+    def get_action_space_size(self) -> int:
         return self._size ** 2
 
     @staticmethod
-    def _translate_index_to_coordinates(index, board_size):
+    def _translate_index_to_coordinates(index: int, board_size: int) -> Position:
         return (index // board_size, index % board_size)
 
     @staticmethod
-    def _translate_coordinates_to_index(coordinates, board_size):
+    def _translate_coordinates_to_index(coordinates: Position, board_size: int) -> int:
         return board_size * coordinates[0] + coordinates[1]
 
-    def _is_position_occupied(self, position, player=None):
+    def _is_position_occupied(
+        self, position: Position, player: Optional[int] = None
+    ) -> bool:
         position_index = Board._translate_coordinates_to_index(position, self._size)
         if player is None:
             return self._board_state[position_index] != 0
 
         return self._board_state[position_index] == player
 
-    def _add_occupant(self, position):
+    def _add_occupant(self, position: Position):
         index = Board._translate_coordinates_to_index(position, self._size)
 
         return tuple(
@@ -69,7 +75,7 @@ class Board(GameBase):
             for i, occupant in enumerate(self._board_state)
         )
 
-    def _board_search_start_side(self, player):
+    def _board_search_start_side(self, player: int):
         if player == 1:
             return product(range(self._size), [0])
         if player == 2:
@@ -77,7 +83,7 @@ class Board(GameBase):
 
         raise ValueError("Invalid player")
 
-    def _board_search_end_side(self, player):
+    def _board_search_end_side(self, player: int):
         if player == 1:
             return product(range(self._size), [self._size - 1])
         if player == 2:
@@ -85,7 +91,7 @@ class Board(GameBase):
 
         raise ValueError("Invalid player")
 
-    def _get_neighbors(self, position, player):
+    def _get_neighbors(self, position: Position, player: int):
         return set(
             filter(
                 lambda pos: Board._are_positions_adjacent(position, pos)
@@ -94,7 +100,7 @@ class Board(GameBase):
             )
         )
 
-    def _board_search(self, position, player, visited):
+    def _board_search(self, position: Position, player: int, visited: set) -> bool:
         if position in self._board_search_end_side(player=player):
             return True
 
@@ -113,7 +119,7 @@ class Board(GameBase):
 
         return reduce(vec2tuples, range(self._size ** 2), [])
 
-    def perform_action(self, position):
+    def perform_action(self, position: Position) -> Board:
         if self._is_finished():
             raise Exception(f"Game is finished")
 
@@ -129,10 +135,10 @@ class Board(GameBase):
     def get_tuple_representation(self):
         return (self._player_turn,) + tuple(self._board_state)
 
-    def _is_finished(self):
+    def _is_finished(self) -> bool:
         return self.is_finished()[0]
 
-    def is_finished(self):
+    def is_finished(self) -> Tuple[bool, Optional[int]]:
         for player in (1, 2):
             for position in self._board_search_start_side(player):
                 if self._is_position_occupied(position, player):
@@ -193,10 +199,10 @@ class Board(GameBase):
             for player in (1, 2)
         )
 
-    def is_end_state_reached(self):
+    def is_end_state_reached(self) -> bool:
         return self.is_finished()[0]
 
-    def __eq__(self, other):
+    def __eq__(self, other: Board) -> bool:
         return (
             self._size == other._size
             and self._player_turn == other._player_turn

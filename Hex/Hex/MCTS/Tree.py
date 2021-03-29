@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import Any, List, Optional
+from typing import List, Optional
 from Hex.Game import GameBase
+from Hex.Types import Action
 
 
 class Tree:
@@ -10,7 +11,7 @@ class Tree:
         children: Tree = None,
         visit_count=0,
         value=0,
-        action: Any = None,
+        action: Optional[Action] = None,
     ):
         self._state = state
         self._is_end_state = state.is_end_state_reached()
@@ -38,10 +39,10 @@ class Tree:
             action=self.get_action(),
         )
 
-    def get_state(self) -> Any:
+    def get_state(self) -> GameBase:
         return self._state
 
-    def get_action(self) -> Any:
+    def get_action(self) -> Action:
         return self._action
 
     def get_value(self) -> int:
@@ -50,7 +51,7 @@ class Tree:
     def get_visit_count(self) -> int:
         return self._visit_count
 
-    def get_children(self):
+    def get_children(self) -> Optional[List[Tree]]:
         if self.is_end_state():
             return None
         if self._children is not None:

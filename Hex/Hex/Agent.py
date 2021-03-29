@@ -1,6 +1,6 @@
 from __future__ import annotations
 import random
-from typing import Optional, Callable
+from typing import Optional
 from operator import getitem, itemgetter
 from Hex.Game import GameBase
 from Hex.Actor import Actor

@@ -3,9 +3,10 @@ import math
 import random
 import operator
 from functools import reduce
-from typing import Callable, Any
+from typing import Optional
 from Hex.Game import GameBase
 from Hex.MCTS import Tree
+from Hex.Types import RolloutPolicy, Action
 
 
 class MCTS:
@@ -15,8 +16,8 @@ class MCTS:
 
     def __init__(
         self,
-        initial_state: Any = None,
-        search_games=100,
+        initial_state: Optional[GameBase] = None,
+        search_games: int = 100,
         _distribution=[],
         _player=1,
         _tree: Tree = None,
@@ -47,7 +48,7 @@ class MCTS:
         )
 
     @staticmethod
-    def _tree_search(rollout_policy: Callable) -> Tree:
+    def _tree_search(rollout_policy: RolloutPolicy) -> Tree:
         def perform_rollout(state: GameBase, player_turn: int) -> int:
             """
             Returns reward from rollout.
@@ -86,7 +87,10 @@ class MCTS:
         return perform_search
 
     def search(
-        self, rollout_policy=lambda state: random.choice(state.get_possible_actions())
+        self,
+        rollout_policy: RolloutPolicy = lambda state: random.choice(
+            state.get_possible_actions()
+        ),
     ) -> MCTS:
         if self._tree.is_end_state():
             return self
@@ -108,7 +112,7 @@ class MCTS:
             _distribution=distribution,
         )
 
-    def get_best_action(self):
+    def get_best_action(self) -> Action:
         """
         Returns action most often taken from current state.
         """
@@ -116,7 +120,7 @@ class MCTS:
             max(self.get_root_distribution(), key=operator.itemgetter(1)), 0
         )
 
-    def update_root(self, new_root_state: Any) -> MCTS:
+    def update_root(self, new_root_state: GameBase) -> MCTS:
         new_tree = next(
             child
             for child in self._tree.get_children()
