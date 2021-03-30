@@ -3,7 +3,7 @@ from networkx.algorithms.operators import union
 from networkx import Graph
 from networkx.drawing.nx_pylab import draw, draw_networkx_nodes, draw_networkx_edges
 from networkx.drawing.layout import rescale_layout
-from Board import Board
+from Hex.Game import Board
 import matplotlib.pyplot as plt
 import numpy as np
 
