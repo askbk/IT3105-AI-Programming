@@ -1,5 +1,6 @@
 from __future__ import annotations
 import random
+import math
 from typing import Optional
 from operator import getitem, itemgetter
 from Hex.Game import GameBase
@@ -67,18 +68,35 @@ class Agent:
         return self._mcts.get_best_action()
 
     def next_state(self, next_state: GameBase) -> Agent:
+        action_visit_count_distribution = self._mcts.get_root_distribution()
+        action_distribution = [0] * self._initial_state.get_action_space_size()
+        total_visit = sum(
+            visit_count for _, visit_count in action_visit_count_distribution
+        )
+        for action, visit_count in action_visit_count_distribution:
+            action_distribution[self._initial_state.action_to_index(action)] = (
+                visit_count / total_visit
+            )
+        replay_buffer = [
+            *self._replay_buffer,
+            (self._initial_state.get_tuple_representation(), action_distribution),
+        ]
         return Agent(
             initial_state=next_state,
             state_size=self._state_size,
             action_space_size=self._action_space_size,
+            _replay_buffer=replay_buffer,
             _mcts=self._mcts.update_root(next_state).search(
                 rollout_policy=Agent._rollout_policy(self._actor)
             ),
         )
 
     def end_of_episode_update(self) -> Agent:
+        subset_size = math.ceil(0.5 * len(self._replay_buffer))
+        training_subset = random.sample(self._replay_buffer, subset_size)
         return Agent(
             initial_state=self._initial_state,
             state_size=self._state_size,
             action_space_size=self._action_space_size,
+            _actor=self._actor.train(training_subset),
         )

@@ -1,3 +1,4 @@
+import random
 from Hex.MCTS.Nim import Nim
 from Hex.Agent import Agent
 
@@ -24,10 +25,11 @@ def test_agent_next_state():
 
 def test_end_of_episode_update():
     k = 2
-    current_agent = Agent(
-        initial_state=Nim(n=2, k=k), state_size=2, action_space_size=k
-    )
-    assert not current_agent.end_of_episode_update() is current_agent
+    state = Nim(n=2, k=k)
+    agent = Agent(initial_state=state, state_size=2, action_space_size=k)
+    action = random.choice(state.get_possible_actions())
+    agent = agent.next_state(state.perform_action(action))
+    agent.end_of_episode_update()
 
 
 def test_nim_playthrough_player_1_wins():
