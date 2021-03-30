@@ -46,5 +46,6 @@ class Actor:
         if y.shape[1] != self._output_size:
             raise ValueError(f"Output vectors must have length {self._output_size}")
 
-        self._nn.train_on_batch(x=tf.convert_to_tensor(x), y=tf.convert_to_tensor(y))
+        self._nn.fit(x=x, y=y, batch_size=len(replay_buffer))
+
         return self
