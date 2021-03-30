@@ -95,3 +95,13 @@ def test_index_to_action():
 
     assert len(actions) == len(possible_actions)
     assert all(action in possible_actions for action in actions)
+
+
+def test_action_to_index():
+    size = 4
+    board = Board(size=size)
+    possible_actions = board.get_possible_actions()
+    indeces = [board.action_to_index(action) for action in possible_actions]
+
+    assert len(indeces) == len(possible_actions)
+    assert all(index in indeces for index in range(size ** 2))

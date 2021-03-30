@@ -3,6 +3,7 @@ from itertools import product
 from functools import reduce
 from Hex.Game.GameBase import GameBase
 from typing import Optional, Tuple
+import Hex.Types as Types
 
 Position = Tuple[int, int]
 
@@ -41,8 +42,11 @@ class Board(GameBase):
     def _get_next_player_turn(current_player_turn: int) -> int:
         return 3 - current_player_turn
 
-    def index_to_action(self, index: int) -> Action:
+    def index_to_action(self, index: int) -> Types.Action:
         return Board._translate_index_to_coordinates(index, self._size)
+
+    def action_to_index(self, action: Position) -> int:
+        return Board._translate_coordinates_to_index(action, self._size)
 
     def get_state_size(self) -> int:
         return self._size ** 2 + 1
