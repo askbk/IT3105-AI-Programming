@@ -67,8 +67,8 @@ class BoardDisplay:
         """
         Draws the game pieces on the board.
         """
-        BoardDisplay._draw_nodes(graph, node_positions, player_1_pieces, 100, "blue")
-        BoardDisplay._draw_nodes(graph, node_positions, player_2_pieces, 100, "red")
+        BoardDisplay._draw_nodes(graph, node_positions, player_1_pieces, 300, "blue")
+        BoardDisplay._draw_nodes(graph, node_positions, player_2_pieces, 300, "red")
 
     @staticmethod
     def _display_board(board):
