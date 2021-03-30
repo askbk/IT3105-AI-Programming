@@ -16,7 +16,7 @@ class AgentBase:
         """
         raise NotImplementedError
 
-    def end_of_episode_update(self) -> AgentBase:
+    def end_of_episode_update(self, initial_state: GameBase) -> AgentBase:
         """
         Perform any updates necessary at the end of the episode
         """

@@ -91,11 +91,11 @@ class Agent:
             ),
         )
 
-    def end_of_episode_update(self) -> Agent:
+    def end_of_episode_update(self, initial_state: GameBase) -> Agent:
         subset_size = math.ceil(0.5 * len(self._replay_buffer))
         training_subset = random.sample(self._replay_buffer, subset_size)
         return Agent(
-            initial_state=self._initial_state,
+            initial_state=initial_state,
             state_size=self._state_size,
             action_space_size=self._action_space_size,
             _actor=self._actor.train(training_subset),

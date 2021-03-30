@@ -40,7 +40,7 @@ class Player:
 
         state_sequence, agent = while_loop(condition, initial, step)
 
-        return state_sequence, agent.end_of_episode_update()
+        return state_sequence, agent.end_of_episode_update(game)
 
     def play_episodes(
         self,
@@ -55,7 +55,7 @@ class Player:
             board_sequence, updated_agent = Player._play_single_episode(
                 self._game, agent
             )
-            if episode_number == episode_count:
+            if episode_number == episode_count - 1:
                 return board_sequence
 
             return updated_agent
