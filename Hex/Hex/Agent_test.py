@@ -9,7 +9,7 @@ def test_agent_get_action():
     assert (
         Agent(
             initial_state=Nim(n=6, k=k), state_size=2, action_space_size=k
-        ).get_action(current_state)
+        ).get_action()
         in current_state.get_possible_actions()
     )
 
@@ -37,7 +37,7 @@ def test_nim_playthrough_player_1_wins():
     state = Nim(n=7, k=k)
     agent = Agent(initial_state=state, state_size=2, action_space_size=k)
     while True:
-        action = agent.get_action(state)
+        action = agent.get_action()
         state = state.perform_action(action)
         agent = agent.next_state(state)
         if state.is_end_state_reached():

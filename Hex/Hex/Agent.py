@@ -62,9 +62,9 @@ class Agent:
 
         return rollout
 
-    def get_action(self, current_state: GameBase) -> Action:
+    def get_action(self) -> Action:
         if random.random() < self._epsilon:
-            return random.choice(current_state.get_possible_actions())
+            return random.choice(self._initial_state.get_possible_actions())
         return self._mcts.get_best_action()
 
     def next_state(self, next_state: GameBase) -> Agent:

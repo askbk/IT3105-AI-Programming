@@ -1,4 +1,5 @@
-from typing import Optional
+from functools import reduce
+from typing import Optional, Tuple, Sequence, Union
 from Hex.Game import GameBase, BoardDisplay
 from Hex.Utils import while_loop
 from Hex.AgentBase import AgentBase
@@ -18,7 +19,10 @@ class Player:
             else _agent
         )
 
-    def _play_single_episode(self):
+    @staticmethod
+    def _play_single_episode(
+        game: GameBase, initial_agent: Agent
+    ) -> Tuple[Sequence[GameBase], AgentBase]:
         def condition(game_state):
             state_sequence, _ = game_state
             return not state_sequence[-1].is_end_state_reached()
@@ -26,22 +30,41 @@ class Player:
         def step(state):
             state_sequence, agent = state
             current_state = state_sequence[-1]
-            next_state = current_state.perform_action(agent.get_action(current_state))
+            next_state = current_state.perform_action(agent.get_action())
             return [*state_sequence, next_state], agent.next_state(next_state)
 
         initial = (
-            [self._game],
-            self._agent,
+            [game],
+            initial_agent,
         )
 
         state_sequence, agent = while_loop(condition, initial, step)
 
         return state_sequence, agent.end_of_episode_update()
 
-    def play_single_episode(self, display_board: bool = True, time_interval: int = 1):
-        boards, _ = self._play_single_episode()
-        if display_board:
-            BoardDisplay.display_board_sequence(boards, pause=time_interval)
+    def play_episodes(
+        self,
+        episode_count: int = 1,
+        display_board: bool = True,
+        time_interval: float = 1,
+    ):
+        def reduce_func(
+            agent: AgentBase, episode_number: int
+        ) -> Union[Sequence[GameBase], AgentBase]:
+            print(f"Episode {episode_number+1}/{episode_count}")
+            board_sequence, updated_agent = Player._play_single_episode(
+                self._game, agent
+            )
+            if episode_number == episode_count:
+                return board_sequence
 
-    def play_episodes(self, episode_count: int = 1):
-        self._play_single_episode()
+            return updated_agent
+
+        last_episode_board_sequence = reduce(
+            reduce_func, range(episode_count), self._agent
+        )
+
+        if display_board:
+            BoardDisplay.display_board_sequence(
+                last_episode_board_sequence, pause=time_interval
+            )
