@@ -1,5 +1,5 @@
 import numpy as np
-from Hex.Game import GameBase
+import Hex.Game.GameBase as GameBase
 from typing import Tuple, Sequence, Union, Any, Callable
 
 StateVector = Union[np.array, Sequence]

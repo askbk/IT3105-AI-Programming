@@ -1,17 +1,17 @@
 from __future__ import annotations
 from typing import Any
 from collections.abc import Sequence
-from Hex.Types import Action
+import Hex.Types as Types
 
 
 class GameBase:
-    def get_possible_actions(self) -> Sequence[Action]:
+    def get_possible_actions(self) -> Sequence[Types.Action]:
         """
         Returns an iterable of all possible actions in the current game state.
         """
         raise NotImplementedError
 
-    def perform_action(self, action: Action) -> GameBase:
+    def perform_action(self, action: Types.Action) -> GameBase:
         """
         Returns the new game state after performing an action in the current state.
         """
@@ -41,7 +41,7 @@ class GameBase:
         """
         raise NotImplementedError
 
-    def index_to_action(self, index: int) -> Action:
+    def index_to_action(self, index: int) -> Types.Action:
         """
         Returns the action corresponding to the given index.
         """
