@@ -1,8 +1,11 @@
 from __future__ import annotations
+from warnings import simplefilter
 from functools import reduce
-import tensorflow.keras as keras
 import numpy as np
 from Hex.Types import StateVector, ProbabilityDistribution, ReplayBuffer
+
+simplefilter(action="ignore", category=DeprecationWarning)
+import tensorflow.keras as keras
 
 
 class Actor:
