@@ -1,0 +1,17 @@
+{
+    "board_size": 3,
+    "epsilon": 0.01,
+    "mcts": {
+        "search_games": 100,
+        "exploration_coefficient": 3
+    },
+    "actor": {
+        "learning_rate": 0.1,
+        "optimizer": "adam",
+        "layers": [
+            {"units": 10, "activation": "relu"},
+            {"units": 10, "activation": "relu"},
+            {"units": 10, "activation": "relu"}
+        ]
+    }
+}
