@@ -5,6 +5,7 @@ import numpy as np
 from Hex.Types import StateVector, ProbabilityDistribution, ReplayBuffer
 
 simplefilter(action="ignore", category=DeprecationWarning)
+import tensorflow as tf
 import tensorflow.keras as keras
 
 
@@ -33,7 +34,7 @@ class Actor:
             raise ValueError(
                 f"Input must be a vector of length {self._input_size}, length was {x.shape[1]}"
             )
-        return self._nn(x).numpy().flatten()
+        return self._nn(tf.convert_to_tensor(x)).numpy().flatten()
 
     def train(self, replay_buffer: ReplayBuffer) -> Actor:
         root_states, probability_distributions = zip(*replay_buffer)
@@ -45,5 +46,5 @@ class Actor:
         if y.shape[1] != self._output_size:
             raise ValueError(f"Output vectors must have length {self._output_size}")
 
-        self._nn.train_on_batch(x=x, y=y)
+        self._nn.train_on_batch(x=tf.convert_to_tensor(x), y=tf.convert_to_tensor(y))
         return self
