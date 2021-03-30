@@ -31,6 +31,12 @@ class Nim(GameBase):
     def index_to_action(self, index):
         return index + 1
 
+    def action_to_index(self, action):
+        return action - 1
+
+    def get_action_space_size(self):
+        return self._k
+
     def __eq__(self, other):
         return self._n == other._n and self._k == other._k
 
