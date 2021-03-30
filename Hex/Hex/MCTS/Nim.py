@@ -37,6 +37,9 @@ class Nim(GameBase):
     def get_action_space_size(self):
         return self._k
 
+    def get_state_size(self):
+        return 2
+
     def __eq__(self, other):
         return self._n == other._n and self._k == other._k
 
