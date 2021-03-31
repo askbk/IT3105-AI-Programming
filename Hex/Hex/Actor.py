@@ -1,5 +1,6 @@
 from __future__ import annotations
 from warnings import simplefilter
+from typing import Dict
 from functools import reduce
 import numpy as np
 from Hex.Types import StateVector, ProbabilityDistribution, ReplayBuffer
@@ -10,7 +11,14 @@ import tensorflow.keras as keras
 
 
 class Actor:
-    def __init__(self, input_size: int, output_size: int):
+    def __init__(
+        self,
+        input_size: int,
+        output_size: int,
+        optimizer="adam",
+        loss="mean_squared_error",
+        learning_rate=0.001,
+    ):
         self._input_size = input_size
         self._output_size = output_size
         inputs = keras.layers.Input(shape=(input_size,))
@@ -26,7 +34,34 @@ class Actor:
             ),
         )
 
-        self._nn.compile(optimizer="adam", loss="mean_squared_error")
+        self._nn.compile(
+            optimizer=Actor._initialize_optimizer(
+                name=optimizer, learning_rate=learning_rate
+            ),
+            loss=loss,
+        )
+
+    @staticmethod
+    def _initialize_optimizer(name, learning_rate):
+        if name == "adam":
+            optimizer = keras.optimizers.Adam
+
+        if name == "rms":
+            optimizer = keras.optimizers.RMSprop
+
+        if name == "adagrad":
+            optimizer = keras.optimizers.Adagrad
+
+        if name == "sgd":
+            optimizer = keras.optimizers.SGD
+
+        return optimizer(learning_rate=learning_rate)
+
+    @staticmethod
+    def from_config(input_size: int, output_size: int, config: Dict) -> Actor:
+        return Actor(
+            input_size=input_size, output_size=output_size, **config.get("actor", {})
+        )
 
     def rollout(self, state_vector: StateVector) -> np.array:
         x = np.atleast_2d(np.array(state_vector))

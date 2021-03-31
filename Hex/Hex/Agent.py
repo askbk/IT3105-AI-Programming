@@ -1,7 +1,7 @@
 from __future__ import annotations
 import random
 import math
-from typing import Optional
+from typing import Optional, Dict
 from operator import getitem, itemgetter
 from Hex.Game import GameBase
 from Hex.Actor import Actor
@@ -42,6 +42,10 @@ class Agent:
             return None
 
         return MCTS(initial_state=initial_state).search()
+
+    @staticmethod
+    def from_config(config: Dict, game: GameBase) -> Agent:
+        return Agent(initial_state=game, epsilon=config.get("epsilon", 0))
 
     @staticmethod
     def _rollout_policy(actor: Actor) -> RolloutPolicy:

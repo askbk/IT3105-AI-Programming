@@ -1,5 +1,6 @@
+from __future__ import annotations
 from functools import reduce
-from typing import Optional, Tuple, Sequence, Union
+from typing import Optional, Tuple, Sequence, Union, Dict
 from Hex.Game import GameBase, BoardDisplay
 from Hex.Utils import while_loop
 from Hex.AgentBase import AgentBase
@@ -10,6 +11,10 @@ class Player:
     def __init__(self, game: GameBase, _agent: Optional[AgentBase] = None):
         self._game = game
         self._agent = Agent(initial_state=game) if _agent is None else _agent
+
+    @staticmethod
+    def from_config(config: Dict, game: GameBase) -> Player:
+        return Player(game=game, _agent=Agent.from_config(config, game))
 
     @staticmethod
     def _play_single_episode(
