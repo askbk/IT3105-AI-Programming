@@ -9,15 +9,7 @@ from Hex.Agent import Agent
 class Player:
     def __init__(self, game: GameBase, _agent: Optional[AgentBase] = None):
         self._game = game
-        self._agent = (
-            Agent(
-                initial_state=game,
-                state_size=game.get_state_size(),
-                action_space_size=game.get_action_space_size(),
-            )
-            if _agent is None
-            else _agent
-        )
+        self._agent = Agent(initial_state=game) if _agent is None else _agent
 
     @staticmethod
     def _play_single_episode(

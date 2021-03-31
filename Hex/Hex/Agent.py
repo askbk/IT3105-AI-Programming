@@ -12,9 +12,7 @@ from Hex.Types import ReplayBuffer, Action, RolloutPolicy
 class Agent:
     def __init__(
         self,
-        state_size: int,
-        action_space_size: int,
-        initial_state=None,
+        initial_state: GameBase,
         epsilon: float = 0,
         _replay_buffer: Optional[ReplayBuffer] = None,
         _actor: Optional[Actor] = None,
@@ -22,15 +20,16 @@ class Agent:
     ):
         self._replay_buffer = [] if _replay_buffer is None else _replay_buffer
         self._actor = (
-            Actor(input_size=state_size, output_size=action_space_size)
+            Actor(
+                input_size=initial_state.get_state_size(),
+                output_size=initial_state.get_action_space_size(),
+            )
             if _actor is None
             else _actor
         )
         self._epsilon = epsilon
         self._mcts = Agent._initialize_mcts(initial_state, _mcts)
         self._initial_state = initial_state
-        self._state_size = state_size
-        self._action_space_size = action_space_size
 
     @staticmethod
     def _initialize_mcts(
@@ -83,8 +82,6 @@ class Agent:
         ]
         return Agent(
             initial_state=next_state,
-            state_size=self._state_size,
-            action_space_size=self._action_space_size,
             _replay_buffer=replay_buffer,
             _mcts=self._mcts.update_root(next_state).search(
                 rollout_policy=Agent._rollout_policy(self._actor)
@@ -96,7 +93,5 @@ class Agent:
         training_subset = random.sample(self._replay_buffer, subset_size)
         return Agent(
             initial_state=initial_state,
-            state_size=self._state_size,
-            action_space_size=self._action_space_size,
             _actor=self._actor.train(training_subset),
         )
