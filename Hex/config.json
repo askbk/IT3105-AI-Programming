@@ -2,11 +2,11 @@
     "board_size": 3,
     "epsilon": 0.01,
     "mcts": {
-        "search_games": 100,
+        "search_games": 500,
         "exploration_coefficient": 3
     },
     "actor": {
-        "learning_rate": 0.1,
+        "learning_rate": 0.001,
         "optimizer": "adam",
         "output_activation": "softmax",
         "layers": [

@@ -9,5 +9,4 @@ def load_config(path: str):
 
 
 if __name__ == "__main__":
-    Player.from_config(load_config("config.json"), game=Board(size=3)).play_episodes(1)
-    # Player(Board(size=3)).play_episodes(10, display_board=False, time_interval=1)
+    Player.from_config(load_config("config.json"), game=Board(size=3)).play_episodes(5)
