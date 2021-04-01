@@ -15,18 +15,11 @@ class Agent:
         initial_state: GameBase,
         epsilon: float = 0,
         _replay_buffer: Optional[ReplayBuffer] = None,
-        _actor: Optional[Actor] = None,
+        _actor: Actor = None,
         _mcts: Optional[MCTS] = None,
     ):
         self._replay_buffer = [] if _replay_buffer is None else _replay_buffer
-        self._actor = (
-            Actor(
-                input_size=initial_state.get_state_size(),
-                output_size=initial_state.get_action_space_size(),
-            )
-            if _actor is None
-            else _actor
-        )
+        self._actor = _actor
         self._epsilon = epsilon
         self._mcts = Agent._initialize_mcts(initial_state, _mcts)
         self._initial_state = initial_state
@@ -45,7 +38,15 @@ class Agent:
 
     @staticmethod
     def from_config(config: Dict, game: GameBase) -> Agent:
-        return Agent(initial_state=game, epsilon=config.get("epsilon", 0))
+        return Agent(
+            initial_state=game,
+            epsilon=config.get("epsilon", 0),
+            _actor=Actor.from_config(
+                input_size=game.get_state_size(),
+                output_size=game.get_action_space_size(),
+                actor_config=config.get("actor", {}),
+            ),
+        )
 
     @staticmethod
     def _rollout_policy(actor: Actor) -> RolloutPolicy:
@@ -90,6 +91,7 @@ class Agent:
             _mcts=self._mcts.update_root(next_state).search(
                 rollout_policy=Agent._rollout_policy(self._actor)
             ),
+            _actor=self._actor,
         )
 
     def end_of_episode_update(self, initial_state: GameBase) -> Agent:
