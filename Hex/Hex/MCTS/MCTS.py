@@ -3,10 +3,10 @@ import math
 import random
 import operator
 from functools import reduce
-from typing import Optional
+from typing import Optional, Dict, Callable, Sequence
 from Hex.Game import GameBase
 from Hex.MCTS import Tree
-from Hex.Types import RolloutPolicy, Action
+from Hex.Types import RolloutPolicy, Action, TreePolicy
 
 
 class MCTS:
@@ -18,14 +18,24 @@ class MCTS:
         self,
         initial_state: Optional[GameBase] = None,
         search_games: int = 100,
+        exploration_coefficient: float = 3,
         _distribution=[],
-        _player=1,
+        _player_turn=1,
         _tree: Tree = None,
     ):
         self._distribution = _distribution
         self._search_games = search_games
         self._tree = Tree(initial_state) if _tree is None else _tree
-        self._player = _player
+        self._player_turn = _player_turn
+        self._exploration_coefficient = exploration_coefficient
+
+    @staticmethod
+    def from_config(mcts_config: Dict, initial_state: GameBase):
+        return MCTS(
+            initial_state=initial_state,
+            search_games=mcts_config.get("search_games", 100),
+            exploration_coefficient=mcts_config.get("exploration_coefficient", 3),
+        )
 
     @staticmethod
     def _get_next_player(player: int) -> int:
@@ -35,20 +45,28 @@ class MCTS:
         return self._distribution
 
     @staticmethod
-    def _upper_confidence_bound(parent: Tree, child: Tree, c=3) -> float:
-        return child.get_value() / (0.01 + child.get_visit_count()) + c * math.sqrt(
+    def _upper_confidence_bound(
+        parent: Tree, exploration_coefficient=3.0
+    ) -> Callable[[Tree], float]:
+        return lambda child: child.get_value() / (
+            0.01 + child.get_visit_count()
+        ) + exploration_coefficient * math.sqrt(
             math.log(parent.get_visit_count()) / (0.01 + child.get_visit_count())
         )
 
     @staticmethod
-    def _select_node_tree_policy(parent: Tree, children: Tree, player: int) -> Tree:
-        func = max if player == 1 else min
-        return func(
-            children, key=lambda child: MCTS._upper_confidence_bound(parent, child)
-        )
+    def _tree_policy(exploration_coefficient: float) -> TreePolicy:
+        def policy(parent: Tree, children: Sequence[Tree], player: int) -> Tree:
+            func = max if player == 1 else min
+            return func(
+                children,
+                key=MCTS._upper_confidence_bound(parent, exploration_coefficient),
+            )
+
+        return policy
 
     @staticmethod
-    def _tree_search(rollout_policy: RolloutPolicy) -> Tree:
+    def _tree_search(rollout_policy: RolloutPolicy, tree_policy: TreePolicy) -> Tree:
         def perform_rollout(state: GameBase, player_turn: int) -> int:
             """
             Returns reward from rollout.
@@ -74,9 +92,7 @@ class MCTS:
                 reward = perform_rollout(tree.get_state(), player_turn)
                 return tree.increment_visit_count(reward=reward)
 
-            selected_child = MCTS._select_node_tree_policy(
-                tree, tree.get_children(), player_turn
-            )
+            selected_child = tree_policy(tree, tree.get_children(), player_turn)
             updated_child = perform_search(
                 selected_child,
                 game_number,
@@ -96,7 +112,9 @@ class MCTS:
             return self
 
         new_tree = reduce(
-            MCTS._tree_search(rollout_policy),
+            MCTS._tree_search(
+                rollout_policy, MCTS._tree_policy(self._exploration_coefficient)
+            ),
             range(self._search_games + 1),
             self._tree,
         )
@@ -108,7 +126,7 @@ class MCTS:
         return MCTS(
             search_games=self._search_games,
             _tree=new_tree,
-            _player=self._player,
+            _player_turn=self._player_turn,
             _distribution=distribution,
         )
 
@@ -116,6 +134,10 @@ class MCTS:
         """
         Returns action most often taken from current state.
         """
+        if len(self.get_root_distribution()) == 0:
+            raise ValueError(
+                "Root distribution is empty - did you remember to run search()?"
+            )
         return operator.getitem(
             max(self.get_root_distribution(), key=operator.itemgetter(1)), 0
         )
@@ -128,7 +150,7 @@ class MCTS:
         )
         return MCTS(
             search_games=self._search_games,
-            _player=MCTS._get_next_player(self._player),
+            _player_turn=MCTS._get_next_player(self._player_turn),
             _tree=new_tree,
         )
 

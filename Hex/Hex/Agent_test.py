@@ -30,11 +30,11 @@ def test_end_of_episode_update():
     agent = agent.next_state(state2)
 
 
-def test_nim_playthrough_player_1_wins():
+def test_nim_playthrough():
     k = 3
     initial_state = Nim(n=7, k=k)
     state = initial_state
-    agent = Agent.from_config({}, game=state)
+    agent = Agent.from_config({"epsilon": 0.5}, game=state)
     while True:
         action = agent.get_action()
         state = state.perform_action(action)

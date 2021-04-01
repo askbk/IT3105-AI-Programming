@@ -25,14 +25,9 @@ class Agent:
         self._initial_state = initial_state
 
     @staticmethod
-    def _initialize_mcts(
-        initial_state: Optional[GameBase], mcts: MCTS
-    ) -> Optional[MCTS]:
+    def _initialize_mcts(initial_state: GameBase, mcts: MCTS) -> Optional[MCTS]:
         if mcts is not None:
             return mcts
-
-        if initial_state is None:
-            return None
 
         return MCTS(initial_state=initial_state).search()
 
@@ -46,6 +41,7 @@ class Agent:
                 output_size=game.get_action_space_size(),
                 actor_config=config.get("actor", {}),
             ),
+            _mcts=MCTS.from_config(config.get("mcts", {}), initial_state=game).search(),
         )
 
     @staticmethod
