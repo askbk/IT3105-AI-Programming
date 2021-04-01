@@ -61,8 +61,9 @@ class Actor:
         return keras.Model(
             inputs=inputs,
             outputs=keras.layers.Dense(
-                units=output_size, activation=actor_config.get("output_activation")
-            )(reduce(create_layer, actor_config.get("layers"), inputs)),
+                units=output_size,
+                activation=actor_config.get("output_activation", "softmax"),
+            )(reduce(create_layer, actor_config.get("layers", []), inputs)),
         )
 
     @staticmethod
