@@ -5,10 +5,17 @@ from Hex.Game import Board
 
 def test_rollout():
     state = Board()
-    distribution = Actor(
+    actor = Actor.from_config(
         input_size=len(state.get_tuple_representation()),
         output_size=state._size ** 2,
-    ).rollout(state.get_tuple_representation())
+        actor_config={
+            "output_activation": "softmax",
+            "layers": [{"units": 10, "activation": "sigmoid"}],
+        },
+    )
+    print(actor._nn.summary())
+
+    distribution = actor.rollout(state.get_tuple_representation())
 
     assert len(distribution) == state._size ** 2
     assert np.isclose(sum(distribution), 1)
@@ -16,9 +23,15 @@ def test_rollout():
 
 def test_train():
     state = Board(size=2)
-    untrained = Actor(
-        input_size=len(state.get_tuple_representation()), output_size=state._size ** 2
+    untrained = Actor.from_config(
+        input_size=len(state.get_tuple_representation()),
+        output_size=state._size ** 2,
+        actor_config={
+            "output_activation": "softmax",
+            "layers": [{"units": 10, "activation": "sigmoid"}],
+        },
     )
+    print(untrained._nn.summary())
 
     replay_buffer = [
         ((1, 0, 0, 0, 0), [0.1, 0.2, 0.3, 0.4]),

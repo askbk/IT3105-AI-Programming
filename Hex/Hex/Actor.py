@@ -1,6 +1,6 @@
 from __future__ import annotations
 from warnings import simplefilter
-from typing import Dict
+from typing import Dict, Sequence
 from functools import reduce
 import numpy as np
 from Hex.Types import StateVector, ProbabilityDistribution, ReplayBuffer
@@ -15,25 +15,15 @@ class Actor:
         self,
         input_size: int,
         output_size: int,
+        network: keras.Model,
         optimizer="adam",
         loss="mean_squared_error",
         learning_rate=0.001,
+        **kwargs,
     ):
         self._input_size = input_size
         self._output_size = output_size
-        inputs = keras.layers.Input(shape=(input_size,))
-        self._nn = keras.Model(
-            inputs=inputs,
-            outputs=reduce(
-                lambda prev_layer, curr_layer: curr_layer(prev_layer),
-                [
-                    keras.layers.Dense(128, activation="relu"),
-                    keras.layers.Dense(output_size, activation="softmax"),
-                ],
-                inputs,
-            ),
-        )
-
+        self._nn = network
         self._nn.compile(
             optimizer=Actor._initialize_optimizer(
                 name=optimizer, learning_rate=learning_rate
@@ -42,7 +32,9 @@ class Actor:
         )
 
     @staticmethod
-    def _initialize_optimizer(name, learning_rate):
+    def _initialize_optimizer(
+        name: str, learning_rate: float
+    ) -> keras.optimizers.Optimizer:
         if name == "adam":
             optimizer = keras.optimizers.Adam
 
@@ -58,9 +50,29 @@ class Actor:
         return optimizer(learning_rate=learning_rate)
 
     @staticmethod
-    def from_config(input_size: int, output_size: int, config: Dict) -> Actor:
+    def _initialize_network(
+        actor_config: Dict, input_size: int, output_size: int
+    ) -> keras.Model:
+        def create_layer(prev_layer, curr_layer_config):
+            return keras.layers.Dense(**curr_layer_config)(prev_layer)
+
+        inputs = keras.layers.Input(shape=(input_size,))
+
+        return keras.Model(
+            inputs=inputs,
+            outputs=keras.layers.Dense(
+                units=output_size, activation=actor_config.get("output_activation")
+            )(reduce(create_layer, actor_config.get("layers"), inputs)),
+        )
+
+    @staticmethod
+    def from_config(input_size: int, output_size: int, actor_config: Dict) -> Actor:
+
         return Actor(
-            input_size=input_size, output_size=output_size, **config.get("actor", {})
+            input_size=input_size,
+            output_size=output_size,
+            network=Actor._initialize_network(actor_config, input_size, output_size),
+            **actor_config,
         )
 
     def rollout(self, state_vector: StateVector) -> np.array:
