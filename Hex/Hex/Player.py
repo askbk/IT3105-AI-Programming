@@ -6,6 +6,8 @@ from Hex.Utils import while_loop
 from Hex.AgentBase import AgentBase
 from Hex.Agent import Agent
 
+EpisodeState = Tuple[Sequence[GameBase], AgentBase]
+
 
 class Player:
     def __init__(self, game: GameBase, _agent: Optional[AgentBase] = None):
@@ -17,14 +19,12 @@ class Player:
         return Player(game=game, _agent=Agent.from_config(config, game))
 
     @staticmethod
-    def _play_single_episode(
-        game: GameBase, initial_agent: Agent
-    ) -> Tuple[Sequence[GameBase], AgentBase]:
-        def condition(game_state):
+    def _play_single_episode(game: GameBase, initial_agent: Agent) -> EpisodeState:
+        def condition(game_state: EpisodeState) -> bool:
             state_sequence, _ = game_state
             return not state_sequence[-1].is_end_state_reached()
 
-        def step(state):
+        def step(state: EpisodeState) -> EpisodeState:
             state_sequence, agent = state
             current_state = state_sequence[-1]
             next_state = current_state.perform_action(agent.get_action())
