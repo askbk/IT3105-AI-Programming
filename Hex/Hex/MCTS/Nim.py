@@ -3,7 +3,7 @@ from Hex.Game import GameBase
 
 
 class Nim(GameBase):
-    def __init__(self, n, k, _player_turn=0):
+    def __init__(self, n, k, _player_turn=1):
         self._n = n
         self._k = k
         self._player_turn = _player_turn
@@ -19,11 +19,17 @@ class Nim(GameBase):
             raise ValueError("Cannot take that many rocks")
 
         return Nim(
-            n=self._n - rock_count, k=self._k, _player_turn=(self._player_turn + 1) % 2
+            n=self._n - rock_count, k=self._k, _player_turn=3 - self._player_turn
         )
 
     def is_end_state_reached(self):
         return self._n == 0
+
+    def is_finished(self):
+        if self.is_end_state_reached():
+            return True, 3 - self._player_turn
+
+        return False, None
 
     def get_tuple_representation(self):
         return (self._player_turn, self._n)

@@ -73,8 +73,9 @@ class MCTS:
             """
             # 1. rollout until end state reached using actor
             # 2. return reward
-            if state.is_end_state_reached():
-                return 1 if player_turn == 1 else -1
+            is_finished, winner = state.is_finished()
+            if is_finished:
+                return 1 if winner == 1 else -1
 
             return perform_rollout(
                 state.perform_action(rollout_policy(state)),
