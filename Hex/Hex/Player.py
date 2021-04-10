@@ -26,6 +26,9 @@ class Player:
 
         return Player.from_config(config, game)
 
+    def save_agent_nn(self, path: str):
+        self._agent._actor._nn.save(path)
+
     @staticmethod
     def _play_single_episode(game: GameBase, initial_agent: Agent) -> EpisodeState:
         def condition(game_state: EpisodeState) -> bool:

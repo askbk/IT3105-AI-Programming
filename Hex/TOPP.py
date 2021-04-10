@@ -1,21 +1,128 @@
-from typing import Sequence
+import random
+from operator import itemgetter
+from typing import Sequence, Tuple
+from itertools import product
+from functools import reduce
+from Hex.MCTS.Nim import Nim
 from Hex.Player import Player
+from Hex.Game import Board, GameBase
+from Hex.AgentBase import AgentBase
+from Hex.GreedyNNAgent import GreedyNNAgent
+from Hex.Utils import while_loop
 
 
-def train_progressive_policies(episodes: int, save_interval: int):
+def train_progressive_policies(
+    episodes: int, save_interval: int, game: GameBase
+) -> Sequence[str]:
     """
     Save progressively more trained models with given interval.
+    Returns file paths of saved models.
     """
-    pass
+    paths = []
+    player = Player.from_config_path("./config.json", game)
+    for episode in range(0, episodes + 1, save_interval):
+        player.play_episodes(episode_count=save_interval, display_board=False)
+        player.save_agent_nn(f"./models/{episode}")
+        paths.append(f"./models/{episode}")
+
+    return paths
 
 
-def play_tournament(players: Sequence[Player], games_per_pair: int):
-    pass
+def play_single_game(agent1: AgentBase, agent2: AgentBase, game: GameBase) -> AgentBase:
+    def condition(state: Tuple[GameBase, AgentBase, AgentBase]) -> bool:
+        game_state, *_ = state
+        return not game_state.is_end_state_reached()
+
+    def step(state: Tuple[GameBase, AgentBase, AgentBase]):
+        game_state, current_agent, next_agent = state
+        next_game_state = game_state.perform_action(current_agent.get_action())
+        return (
+            next_game_state,
+            next_agent.next_state(next_game_state),
+            current_agent.next_state(next_game_state),
+        )
+
+    initial = (game, agent1, agent2)
+
+    end_state, *_ = while_loop(condition, initial, step)
+    _, winner = end_state.is_finished()
+
+    return agent1 if winner == 1 else agent2
 
 
-def train_and_play_tournament(episodes: int, save_interval: int, games_per_pair: int):
-    pass
+def aggregate_results(raw_results, agents: Sequence[AgentBase]):
+    def get_series_winner(series_results):
+        (agent1, agent1_wins), (agent2, agent2_wins) = series_results
+        if agent1_wins > agent2_wins:
+            return agent1
+        if agent2_wins > agent1_wins:
+            return agent2
+        return None
+
+    def get_series_won_games(series_results, agent):
+        (agent1, agent1_wins), (agent2, agent2_wins) = series_results
+        if agent is agent1:
+            return agent1_wins
+        if agent is agent2:
+            return agent2_wins
+        return 0
+
+    def aggregate_reducer(results, agent: AgentBase):
+        won_series = sum(
+            1 if get_series_winner(series_results) is agent else 0
+            for series_results in raw_results
+        )
+        won_games = sum(
+            get_series_won_games(series_results, agent)
+            for series_results in raw_results
+        )
+        return {**results, agent.get_name(): (won_games, won_series)}
+
+    return reduce(aggregate_reducer, agents, dict())
+
+
+def play_tournament(agents: Sequence[AgentBase], games_per_pair: int, game: GameBase):
+    def play_series(agent_pair: Tuple[AgentBase, AgentBase]):
+        agent1, agent2 = agent_pair
+        series_results = [
+            play_single_game(*random.sample(agent_pair, k=2), game)
+            for _ in range(games_per_pair)
+        ]
+        return (agent1, series_results.count(agent1)), (
+            agent2,
+            series_results.count(agent2),
+        )
+
+    agent_pairs = filter(lambda pair: pair[0] is not pair[1], product(agents, repeat=2))
+    tournament_results = [play_series(agent_pair) for agent_pair in agent_pairs]
+    aggregated = aggregate_results(tournament_results, agents)
+    sorted_by_games = sorted(
+        ((name, won[0]) for name, won in aggregated.items()),
+        key=itemgetter(1),
+        reverse=True,
+    )
+    sorted_by_series = sorted(
+        ((name, won[1]) for name, won in aggregated.items()),
+        key=itemgetter(1),
+        reverse=True,
+    )
+    print("Sorted by games won:", *sorted_by_games, sep="\n")
+    print("Sorted by series won:", *sorted_by_series, sep="\n")
+
+
+def train_and_play_tournament(
+    episodes: int, save_interval: int, games_per_series: int, game: GameBase
+):
+    saved_nn_paths = train_progressive_policies(episodes, save_interval, game)
+
+    agents = [GreedyNNAgent.from_saved_nn(path, game) for path in saved_nn_paths]
+
+    play_tournament(agents, games_per_series, game)
 
 
 if __name__ == "__main__":
-    train_and_play_tournament(50, 5, 3)
+    game = Board(size=4)
+    # game = Nim(n=5, k=2)
+    train_and_play_tournament(
+        episodes=40, save_interval=10, games_per_series=11, game=game
+    )

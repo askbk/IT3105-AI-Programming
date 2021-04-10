@@ -4,7 +4,7 @@ from Hex.Types import Action
 
 
 class AgentBase:
-    def get_next_action(self) -> Action:
+    def get_action(self) -> Action:
         """
         Returns next action to perform.
         """
@@ -18,6 +18,12 @@ class AgentBase:
 
     def end_of_episode_update(self, initial_state: GameBase) -> AgentBase:
         """
-        Perform any updates necessary at the end of the episode
+        Perform any updates necessary at the end of the episode.
+        """
+        raise NotImplementedError
+
+    def get_name(self):
+        """
+        Returns agent's name.
         """
         raise NotImplementedError

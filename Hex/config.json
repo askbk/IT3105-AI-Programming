@@ -1,18 +1,17 @@
 {
-    "board_size": 3,
-    "epsilon": 0.01,
-    "mcts": {
-        "search_games": 500,
-        "exploration_coefficient": 3
-    },
-    "actor": {
-        "learning_rate": 0.001,
-        "optimizer": "adam",
-        "output_activation": "softmax",
-        "layers": [
-            {"units": 10, "activation": "relu"},
-            {"units": 10, "activation": "relu"},
-            {"units": 10, "activation": "relu"}
-        ]
-    }
+  "board_size": 3,
+  "epsilon": 0.01,
+  "mcts": {
+    "search_games": 500,
+    "exploration_coefficient": 3
+  },
+  "actor": {
+    "learning_rate": 0.001,
+    "optimizer": "adam",
+    "output_activation": "softmax",
+    "layers": [
+      { "units": 30, "activation": "relu" },
+      { "units": 20, "activation": "relu" }
+    ]
+  }
 }
