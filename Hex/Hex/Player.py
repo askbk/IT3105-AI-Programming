@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 from functools import reduce
 from typing import Optional, Tuple, Sequence, Union, Dict
 from Hex.Game import GameBase, BoardDisplay
@@ -17,6 +18,13 @@ class Player:
     @staticmethod
     def from_config(config: Dict, game: GameBase) -> Player:
         return Player(game=game, _agent=Agent.from_config(config, game))
+
+    @staticmethod
+    def from_config_path(path: str, game: GameBase) -> Player:
+        with open(path, mode="r") as f:
+            config = json.loads(f.read())
+
+        return Player.from_config(config, game)
 
     @staticmethod
     def _play_single_episode(game: GameBase, initial_agent: Agent) -> EpisodeState:

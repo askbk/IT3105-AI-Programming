@@ -1,12 +1,5 @@
-import json
 from Hex.Game import Board
 from Hex.Player import Player
 
-
-def load_config(path: str):
-    with open(path, mode="r") as f:
-        return json.loads(f.read())
-
-
 if __name__ == "__main__":
-    Player.from_config(load_config("config.json"), game=Board(size=3)).play_episodes(5)
+    Player.from_config_path("config.json", game=Board(size=3)).play_episodes(5)
