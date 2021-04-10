@@ -8,6 +8,9 @@ class Nim(GameBase):
         self._k = k
         self._player_turn = _player_turn
 
+    def get_player_turn(self):
+        return self._player_turn
+
     def get_possible_actions(self):
         return list(range(1, min(self._n, self._k) + 1))
 
