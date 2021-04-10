@@ -51,8 +51,7 @@ class MCTS:
     @staticmethod
     def _tree_policy(exploration_coefficient: float) -> TreePolicy:
         def policy(parent: Tree, children: Sequence[Tree]) -> Tree:
-            player_turn = parent.get_state().get_player_turn()
-            func = max if player_turn == 1 else min
+            func = max if parent.get_state().get_player_turn() == 1 else min
             return func(
                 children,
                 key=MCTS._upper_confidence_bound(parent, exploration_coefficient),
@@ -61,7 +60,9 @@ class MCTS:
         return policy
 
     @staticmethod
-    def _tree_search(rollout_policy: RolloutPolicy, tree_policy: TreePolicy) -> Tree:
+    def _tree_search(
+        rollout_policy: RolloutPolicy, tree_policy: TreePolicy
+    ) -> Callable[[Tree, int], Tree]:
         def perform_rollout(state: GameBase) -> int:
             """
             Returns reward from rollout.
