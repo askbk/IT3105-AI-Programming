@@ -43,16 +43,15 @@ def test_MCTS_update_root():
 def nim_playthrough_winner(n, k, search_games):
     state = Nim(n=n, k=k)
     mcts = MCTS(initial_state=state, search_games=search_games)
-    player_turn = 1
     saps = []
     while True:
         mcts = mcts.search()
         best_action = mcts.get_best_action()
         saps.append((state, best_action))
         state = state.perform_action(best_action)
-        if state.is_end_state_reached():
-            return player_turn
-        player_turn = 3 - player_turn
+        is_finished, winner = state.is_finished()
+        if is_finished:
+            return winner
         mcts = mcts.update_root(state)
 
 

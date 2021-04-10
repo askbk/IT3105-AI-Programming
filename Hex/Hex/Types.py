@@ -7,4 +7,4 @@ ProbabilityDistribution = Union[np.array, Sequence]
 ReplayBuffer = Sequence[Tuple[StateVector, ProbabilityDistribution]]
 Action = Any
 RolloutPolicy = Callable[[GameBase], Action]
-TreePolicy = Callable[[Any, Sequence[Any], int], Any]
+TreePolicy = Callable[[Any, Sequence[Any]], Any]

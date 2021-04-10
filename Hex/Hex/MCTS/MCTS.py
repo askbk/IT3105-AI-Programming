@@ -20,13 +20,11 @@ class MCTS:
         search_games: int = 100,
         exploration_coefficient: float = 3,
         _distribution=[],
-        _player_turn=1,
         _tree: Tree = None,
     ):
         self._distribution = _distribution
         self._search_games = search_games
         self._tree = Tree(initial_state) if _tree is None else _tree
-        self._player_turn = _player_turn
         self._exploration_coefficient = exploration_coefficient
 
     @staticmethod
@@ -36,10 +34,6 @@ class MCTS:
             search_games=mcts_config.get("search_games", 100),
             exploration_coefficient=mcts_config.get("exploration_coefficient", 3),
         )
-
-    @staticmethod
-    def _get_next_player(player: int) -> int:
-        return 3 - player
 
     def get_root_distribution(self) -> list:
         return self._distribution
@@ -56,8 +50,8 @@ class MCTS:
 
     @staticmethod
     def _tree_policy(exploration_coefficient: float) -> TreePolicy:
-        def policy(parent: Tree, children: Sequence[Tree], player: int) -> Tree:
-            func = max if player == 1 else min
+        def policy(parent: Tree, children: Sequence[Tree]) -> Tree:
+            func = max if parent.get_state().get_player_turn() == 1 else min
             return func(
                 children,
                 key=MCTS._upper_confidence_bound(parent, exploration_coefficient),
@@ -66,22 +60,22 @@ class MCTS:
         return policy
 
     @staticmethod
-    def _tree_search(rollout_policy: RolloutPolicy, tree_policy: TreePolicy) -> Tree:
-        def perform_rollout(state: GameBase, player_turn: int) -> int:
+    def _tree_search(
+        rollout_policy: RolloutPolicy, tree_policy: TreePolicy
+    ) -> Callable[[Tree, int], Tree]:
+        def perform_rollout(state: GameBase) -> int:
             """
             Returns reward from rollout.
             """
             # 1. rollout until end state reached using actor
             # 2. return reward
-            if state.is_end_state_reached():
-                return 1 if player_turn == 1 else -1
+            is_finished, winner = state.is_finished()
+            if is_finished:
+                return 1 if winner == 1 else -1
 
-            return perform_rollout(
-                state.perform_action(rollout_policy(state)),
-                MCTS._get_next_player(player_turn),
-            )
+            return perform_rollout(state.perform_action(rollout_policy(state)))
 
-        def perform_search(tree: Tree, game_number: int, player_turn=1) -> Tree:
+        def perform_search(tree: Tree, game_number: int) -> Tree:
             """
             Return new tree with updated statistics.
             """
@@ -89,15 +83,11 @@ class MCTS:
             # 2. perform rollout from node
             # 3. update tree with reward from rollout
             if not tree.is_visited() or tree.is_end_state():
-                reward = perform_rollout(tree.get_state(), player_turn)
+                reward = perform_rollout(tree.get_state())
                 return tree.increment_visit_count(reward=reward)
 
-            selected_child = tree_policy(tree, tree.get_children(), player_turn)
-            updated_child = perform_search(
-                selected_child,
-                game_number,
-                player_turn=MCTS._get_next_player(player_turn),
-            )
+            selected_child = tree_policy(tree, tree.get_children())
+            updated_child = perform_search(selected_child, game_number)
             return tree.update_child_node(selected_child, updated_child)
 
         return perform_search
@@ -126,7 +116,6 @@ class MCTS:
         return MCTS(
             search_games=self._search_games,
             _tree=new_tree,
-            _player_turn=self._player_turn,
             _distribution=distribution,
         )
 
@@ -150,7 +139,6 @@ class MCTS:
         )
         return MCTS(
             search_games=self._search_games,
-            _player_turn=MCTS._get_next_player(self._player_turn),
             _tree=new_tree,
         )
 

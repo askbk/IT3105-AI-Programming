@@ -105,3 +105,10 @@ def test_action_to_index():
 
     assert len(indeces) == len(possible_actions)
     assert all(index in indeces for index in range(size ** 2))
+
+
+def test_get_player_turn():
+    board = Board()
+
+    assert board.get_player_turn() == 1
+    assert board.perform_action(board.get_possible_actions()[0]).get_player_turn() == 2

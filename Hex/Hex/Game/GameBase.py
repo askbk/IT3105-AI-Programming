@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any
+from typing import Tuple, Optional
 from collections.abc import Sequence
 import Hex.Types as Types
 
@@ -20,6 +20,12 @@ class GameBase:
     def is_end_state_reached(self) -> bool:
         """
         Returns a boolean indicating whether the game has reached an end state.
+        """
+        raise NotImplementedError
+
+    def is_finished(self) -> Tuple[bool, Optional[int]]:
+        """
+        Returns a (bool, int) tuple indicating whether an end state is reached and the winner.
         """
         raise NotImplementedError
 
@@ -50,6 +56,12 @@ class GameBase:
     def action_to_index(self, action: Types.Action) -> int:
         """
         Returns the index corresponding to the given action.
+        """
+        raise NotImplementedError
+
+    def get_player_turn(self) -> int:
+        """
+        Returns the player whose turn it is to perform an action.
         """
         raise NotImplementedError
 
