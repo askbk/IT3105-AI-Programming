@@ -59,5 +59,11 @@ class GameBase:
         """
         raise NotImplementedError
 
+    def get_player_turn(self) -> int:
+        """
+        Returns the player whose turn it is to perform an action.
+        """
+        raise NotImplementedError
+
     def __eq__(self, other: GameBase) -> bool:
         raise NotImplementedError

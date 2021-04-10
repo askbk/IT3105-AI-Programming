@@ -206,6 +206,9 @@ class Board(GameBase):
     def is_end_state_reached(self) -> bool:
         return self.is_finished()[0]
 
+    def get_player_turn(self) -> int:
+        return self._player_turn
+
     def __eq__(self, other: Board) -> bool:
         return (
             self._size == other._size
