@@ -20,7 +20,9 @@ def train_progressive_policies(
     """
     paths = []
     player = Player.from_config_path("./config.json", game)
-    for episode in range(0, episodes + 1, save_interval):
+    player.save_agent_nn(f"./models/0")
+    paths.append(f"./models/0")
+    for episode in range(save_interval, episodes + 1, save_interval):
         player.play_episodes(episode_count=save_interval, display_board=False)
         player.save_agent_nn(f"./models/{episode}")
         paths.append(f"./models/{episode}")
@@ -124,5 +126,5 @@ if __name__ == "__main__":
     game = Board(size=4)
     # game = Nim(n=5, k=2)
     train_and_play_tournament(
-        episodes=40, save_interval=10, games_per_series=11, game=game
+        episodes=10, save_interval=5, games_per_series=11, game=game
     )
