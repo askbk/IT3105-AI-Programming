@@ -84,11 +84,13 @@ class Board(GameBase):
             for i, occupant in enumerate(self._board_state)
         )
 
-    def _board_search_start_side(self, player: int):
+    @staticmethod
+    @cache
+    def _board_search_start_side(player: int, board_size: int):
         if player == 1:
-            return product(range(self._size), [0])
+            return list(product(range(board_size), [0]))
         if player == 2:
-            return product([0], range(self._size))
+            return list(product([0], range(board_size)))
 
         raise ValueError("Invalid player")
 
@@ -148,7 +150,7 @@ class Board(GameBase):
 
     def _is_end_state_get_winner(self) -> Tuple[bool, Optional[int]]:
         for player in (1, 2):
-            for position in self._board_search_start_side(player):
+            for position in Board._board_search_start_side(player, self._size):
                 if self._is_position_occupied(position, player):
                     if self._board_search(position, player=player, visited={position}):
                         return True, player
