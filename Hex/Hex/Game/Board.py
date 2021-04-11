@@ -17,8 +17,12 @@ class Board(GameBase):
         self._size = size
         self._board_state = (0,) * size ** 2 if _board_state is None else _board_state
         self._player_turn = 1 if _player_turn is None else _player_turn
+        is_finished, winner = self._is_end_state_get_winner()
+        self._is_finished = is_finished
+        self._winner = winner
 
     @staticmethod
+    @cache
     def _get_valid_positions(size: int):
         return set(product(range(size), range(size)))
 
@@ -123,7 +127,7 @@ class Board(GameBase):
         return reduce(vec2tuples, range(self._size ** 2), [])
 
     def perform_action(self, position: Position) -> Board:
-        if self._is_finished():
+        if self._is_finished:
             raise Exception(f"Game is finished")
 
         if self._is_position_occupied(position):
@@ -138,10 +142,7 @@ class Board(GameBase):
     def get_tuple_representation(self):
         return (self._player_turn,) + tuple(self._board_state)
 
-    def _is_finished(self) -> bool:
-        return self.is_finished()[0]
-
-    def is_finished(self) -> Tuple[bool, Optional[int]]:
+    def _is_end_state_get_winner(self) -> Tuple[bool, Optional[int]]:
         for player in (1, 2):
             for position in self._board_search_start_side(player):
                 if self._is_position_occupied(position, player):
@@ -149,6 +150,9 @@ class Board(GameBase):
                         return True, player
 
         return False, None
+
+    def is_finished(self):
+        return self._is_finished, self._winner
 
     def get_edge_list(self):
         """
@@ -203,7 +207,7 @@ class Board(GameBase):
         )
 
     def is_end_state_reached(self) -> bool:
-        return self.is_finished()[0]
+        return self._is_finished
 
     def get_player_turn(self) -> int:
         return self._player_turn
