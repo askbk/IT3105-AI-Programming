@@ -1,6 +1,6 @@
 from __future__ import annotations
 from itertools import product
-from functools import reduce
+from functools import reduce, cache
 from Hex.Game.GameBase import GameBase
 from typing import Optional, Tuple
 import Hex.Types as Types
@@ -23,6 +23,7 @@ class Board(GameBase):
         return set(product(range(size), range(size)))
 
     @staticmethod
+    @cache
     def _are_positions_adjacent(position_a: Position, position_b: Position) -> bool:
         if position_a[0] == position_b[0]:
             return abs(position_a[1] - position_b[1]) == 1
@@ -109,10 +110,8 @@ class Board(GameBase):
             return True
 
         return any(
-            [
-                self._board_search(neighbor, player, visited | {neighbor})
-                for neighbor in self._get_neighbors(position, player) - visited
-            ]
+            self._board_search(neighbor, player, visited | {neighbor})
+            for neighbor in self._get_neighbors(position, player) - visited
         )
 
     def get_possible_actions(self):
