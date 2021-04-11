@@ -1,6 +1,6 @@
 from __future__ import annotations
 from itertools import product
-from functools import reduce
+from functools import reduce, cache
 from Hex.Game.GameBase import GameBase
 from typing import Optional, Tuple
 import Hex.Types as Types
@@ -17,12 +17,17 @@ class Board(GameBase):
         self._size = size
         self._board_state = (0,) * size ** 2 if _board_state is None else _board_state
         self._player_turn = 1 if _player_turn is None else _player_turn
+        is_finished, winner = self._is_end_state_get_winner()
+        self._is_finished = is_finished
+        self._winner = winner
 
     @staticmethod
+    @cache
     def _get_valid_positions(size: int):
         return set(product(range(size), range(size)))
 
     @staticmethod
+    @cache
     def _are_positions_adjacent(position_a: Position, position_b: Position) -> bool:
         if position_a[0] == position_b[0]:
             return abs(position_a[1] - position_b[1]) == 1
@@ -79,19 +84,23 @@ class Board(GameBase):
             for i, occupant in enumerate(self._board_state)
         )
 
-    def _board_search_start_side(self, player: int):
+    @staticmethod
+    @cache
+    def _board_search_start_side(player: int, board_size: int):
         if player == 1:
-            return product(range(self._size), [0])
+            return list(product(range(board_size), [0]))
         if player == 2:
-            return product([0], range(self._size))
+            return list(product([0], range(board_size)))
 
         raise ValueError("Invalid player")
 
-    def _board_search_end_side(self, player: int):
+    @staticmethod
+    @cache
+    def _board_search_end_side(player: int, board_size: int):
         if player == 1:
-            return product(range(self._size), [self._size - 1])
+            return list(product(range(board_size), [board_size - 1]))
         if player == 2:
-            return product([self._size - 1], range(self._size))
+            return list(product([board_size - 1], range(board_size)))
 
         raise ValueError("Invalid player")
 
@@ -105,14 +114,14 @@ class Board(GameBase):
         )
 
     def _board_search(self, position: Position, player: int, visited: set) -> bool:
-        if position in self._board_search_end_side(player=player):
+        if position in Board._board_search_end_side(
+            player=player, board_size=self._size
+        ):
             return True
 
         return any(
-            [
-                self._board_search(neighbor, player, visited | {neighbor})
-                for neighbor in self._get_neighbors(position, player) - visited
-            ]
+            self._board_search(neighbor, player, visited | {neighbor})
+            for neighbor in self._get_neighbors(position, player) - visited
         )
 
     def get_possible_actions(self):
@@ -124,7 +133,7 @@ class Board(GameBase):
         return reduce(vec2tuples, range(self._size ** 2), [])
 
     def perform_action(self, position: Position) -> Board:
-        if self._is_finished():
+        if self._is_finished:
             raise Exception(f"Game is finished")
 
         if self._is_position_occupied(position):
@@ -139,17 +148,17 @@ class Board(GameBase):
     def get_tuple_representation(self):
         return (self._player_turn,) + tuple(self._board_state)
 
-    def _is_finished(self) -> bool:
-        return self.is_finished()[0]
-
-    def is_finished(self) -> Tuple[bool, Optional[int]]:
+    def _is_end_state_get_winner(self) -> Tuple[bool, Optional[int]]:
         for player in (1, 2):
-            for position in self._board_search_start_side(player):
+            for position in Board._board_search_start_side(player, self._size):
                 if self._is_position_occupied(position, player):
                     if self._board_search(position, player=player, visited={position}):
                         return True, player
 
         return False, None
+
+    def is_finished(self):
+        return self._is_finished, self._winner
 
     def get_edge_list(self):
         """
@@ -204,7 +213,7 @@ class Board(GameBase):
         )
 
     def is_end_state_reached(self) -> bool:
-        return self.is_finished()[0]
+        return self._is_finished
 
     def get_player_turn(self) -> int:
         return self._player_turn
