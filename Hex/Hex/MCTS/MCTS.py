@@ -40,9 +40,10 @@ class MCTS:
 
     @staticmethod
     def _upper_confidence_bound(
-        parent: Tree, exploration_coefficient=3.0
+        player_turn: int, parent: Tree, exploration_coefficient=3.0
     ) -> Callable[[Tree], float]:
-        return lambda child: child.get_value() / (
+        value_multiplier = 1 if player_turn == 1 else -1
+        return lambda child: value_multiplier * child.get_value() / (
             0.01 + child.get_visit_count()
         ) + exploration_coefficient * math.sqrt(
             math.log(parent.get_visit_count()) / (0.01 + child.get_visit_count())
@@ -51,10 +52,13 @@ class MCTS:
     @staticmethod
     def _tree_policy(exploration_coefficient: float) -> TreePolicy:
         def policy(parent: Tree, children: Sequence[Tree]) -> Tree:
-            func = max if parent.get_state().get_player_turn() == 1 else min
-            return func(
+            return max(
                 children,
-                key=MCTS._upper_confidence_bound(parent, exploration_coefficient),
+                key=MCTS._upper_confidence_bound(
+                    parent.get_state().get_player_turn(),
+                    parent,
+                    exploration_coefficient,
+                ),
             )
 
         return policy
