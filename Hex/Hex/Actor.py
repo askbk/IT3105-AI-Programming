@@ -94,6 +94,6 @@ class Actor:
         if y.shape[1] != self._output_size:
             raise ValueError(f"Output vectors must have length {self._output_size}")
 
-        self._nn.fit(x=x, y=y, batch_size=len(replay_buffer))
+        self._nn.train_on_batch(x=x, y=y)
 
         return self
