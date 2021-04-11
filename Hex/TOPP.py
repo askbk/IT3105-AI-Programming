@@ -1,7 +1,6 @@
 import random
 from operator import itemgetter
 from typing import Sequence, Tuple
-from itertools import product
 from functools import reduce
 from Hex.MCTS.Nim import Nim
 from Hex.Player import Player
@@ -63,19 +62,19 @@ def aggregate_results(raw_results, agents: Sequence[AgentBase]):
 
     def get_series_won_games(series_results, agent):
         (agent1, agent1_wins), (agent2, agent2_wins) = series_results
-        if agent is agent1:
+        if agent == agent1:
             return agent1_wins
-        if agent is agent2:
+        if agent == agent2:
             return agent2_wins
         return 0
 
     def aggregate_reducer(results, agent: AgentBase):
         won_series = sum(
-            1 if get_series_winner(series_results) is agent else 0
+            1 if get_series_winner(series_results) == agent.get_name() else 0
             for series_results in raw_results
         )
         won_games = sum(
-            get_series_won_games(series_results, agent)
+            get_series_won_games(series_results, agent.get_name())
             for series_results in raw_results
         )
         return {**results, agent.get_name(): (won_games, won_series)}
@@ -90,12 +89,17 @@ def play_tournament(agents: Sequence[AgentBase], games_per_pair: int, game: Game
             play_single_game(*random.sample(agent_pair, k=2), game)
             for _ in range(games_per_pair)
         ]
-        return (agent1, series_results.count(agent1)), (
-            agent2,
+        return (agent1.get_name(), series_results.count(agent1)), (
+            agent2.get_name(),
             series_results.count(agent2),
         )
 
-    agent_pairs = filter(lambda pair: pair[0] is not pair[1], product(agents, repeat=2))
+    agent_pairs = [
+        (agents[i], agents[j])
+        for i in range(len(agents))
+        for j in range(i + 1, len(agents))
+    ]
+
     tournament_results = [play_series(agent_pair) for agent_pair in agent_pairs]
     aggregated = aggregate_results(tournament_results, agents)
     sorted_by_games = sorted(
@@ -126,5 +130,5 @@ if __name__ == "__main__":
     game = Board(size=4)
     # game = Nim(n=5, k=2)
     train_and_play_tournament(
-        episodes=10, save_interval=5, games_per_series=11, game=game
+        episodes=200, save_interval=50, games_per_series=11, game=game
     )
