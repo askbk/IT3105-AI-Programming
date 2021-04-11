@@ -92,11 +92,13 @@ class Board(GameBase):
 
         raise ValueError("Invalid player")
 
-    def _board_search_end_side(self, player: int):
+    @staticmethod
+    @cache
+    def _board_search_end_side(player: int, board_size: int):
         if player == 1:
-            return product(range(self._size), [self._size - 1])
+            return list(product(range(board_size), [board_size - 1]))
         if player == 2:
-            return product([self._size - 1], range(self._size))
+            return list(product([board_size - 1], range(board_size)))
 
         raise ValueError("Invalid player")
 
@@ -110,7 +112,9 @@ class Board(GameBase):
         )
 
     def _board_search(self, position: Position, player: int, visited: set) -> bool:
-        if position in self._board_search_end_side(player=player):
+        if position in Board._board_search_end_side(
+            player=player, board_size=self._size
+        ):
             return True
 
         return any(
