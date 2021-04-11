@@ -1,14 +1,16 @@
 {
   "board_size": 3,
-  "epsilon": 0.01,
+  "epsilon": 0.1,
   "mcts": {
-    "search_games": 500,
-    "exploration_coefficient": 3
+    "search_games": 2000,
+    "exploration_coefficient": 3,
+    "time_limit": 0.5
   },
   "actor": {
-    "learning_rate": 0.001,
+    "learning_rate": 0.01,
     "optimizer": "adam",
-    "output_activation": "softmax",
+    "output_activation": "sigmoid",
+    "loss": "categorical_crossentropy",
     "layers": [
       { "units": 30, "activation": "relu" },
       { "units": 20, "activation": "relu" }
