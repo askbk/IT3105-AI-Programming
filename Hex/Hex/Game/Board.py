@@ -114,11 +114,17 @@ class Board(GameBase):
         raise ValueError("Invalid player")
 
     def _get_neighbors(self, position: Position, player: int):
+        deltas = [(0, 1), (0, -1), (1, 0), (-1, 0), (-1, 1), (1, -1)]
+        positions = [
+            (position[0] + delta[0], position[1] + delta[1])
+            for delta in deltas
+            if 0 <= position[0] + delta[0] < self._size
+            and 0 <= position[1] + delta[1] < self._size
+        ]
         return set(
             filter(
-                lambda pos: Board._are_positions_adjacent(position, pos)
-                and self._is_position_occupied(pos, player),
-                Board._get_valid_positions(self._size),
+                lambda pos: self._is_position_occupied(pos, player),
+                positions,
             )
         )
 
