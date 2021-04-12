@@ -66,6 +66,16 @@ def test_vectorized_board():
     )
 
 
+def test_from_tuple():
+    actions = [(0, 1), (1, 2), (3, 1), (2, 2)]
+    board = reduce(
+        lambda board, action: board.perform_action(action), actions, Board(size=4)
+    )
+
+    state_tuple = board.get_tuple_representation()
+    assert Board.from_tuple_representation(state_tuple) == board
+
+
 def test_win_condition():
     with pytest.raises(Exception):
         reduce(

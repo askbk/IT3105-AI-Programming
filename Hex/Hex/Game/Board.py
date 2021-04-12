@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 from itertools import product
 from functools import reduce, cache
 from Hex.Game.GameBase import GameBase
@@ -15,11 +16,19 @@ class Board(GameBase):
 
     def __init__(self, size=4, _board_state=None, _player_turn: Optional[int] = None):
         self._size = size
-        self._board_state = (0,) * size ** 2 if _board_state is None else _board_state
+        self._board_state = (
+            (0,) * size ** 2 if _board_state is None else tuple(_board_state)
+        )
         self._player_turn = 1 if _player_turn is None else _player_turn
         is_finished, winner = self._is_end_state_get_winner()
         self._is_finished = is_finished
         self._winner = winner
+
+    @staticmethod
+    def from_tuple_representation(state: Tuple):
+        player_turn, *board_state = state
+        size = int(math.sqrt(len(board_state)))
+        return Board(size=size, _board_state=board_state, _player_turn=player_turn)
 
     @staticmethod
     @cache
