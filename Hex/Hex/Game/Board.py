@@ -76,14 +76,21 @@ class Board(GameBase):
     def _translate_coordinates_to_index(coordinates: Position, board_size: int) -> int:
         return board_size * coordinates[0] + coordinates[1]
 
-    def _is_position_occupied(
-        self, position: Position, player: Optional[int] = None
-    ) -> bool:
-        position_index = Board._translate_coordinates_to_index(position, self._size)
-        if player is None:
-            return self._board_state[position_index] != 0
+    def _is_position_occupied_by(self, position: Position, player: int):
+        return (
+            self._board_state[
+                Board._translate_coordinates_to_index(position, self._size)
+            ]
+            == player
+        )
 
-        return self._board_state[position_index] == player
+    def _is_position_occupied(self, position: Position) -> bool:
+        return (
+            self._board_state[
+                Board._translate_coordinates_to_index(position, self._size)
+            ]
+            != 0
+        )
 
     def _add_occupant(self, position: Position):
         index = Board._translate_coordinates_to_index(position, self._size)
@@ -116,8 +123,8 @@ class Board(GameBase):
     def _get_neighbors(self, position: Position, player: int):
         return set(
             filter(
-                lambda pos: Board._are_positions_adjacent(position, pos)
-                and self._is_position_occupied(pos, player),
+                lambda pos: Board._are_positions_adjacent(pos, position)
+                and self._is_position_occupied_by(pos, player),
                 Board._get_valid_positions(self._size),
             )
         )
@@ -127,10 +134,10 @@ class Board(GameBase):
             player=player, board_size=self._size
         ):
             return True
-
+        unvisited_neighbors = self._get_neighbors(position, player) - visited
         return any(
-            self._board_search(neighbor, player, visited | {neighbor})
-            for neighbor in self._get_neighbors(position, player) - visited
+            self._board_search(neighbor, player, visited | unvisited_neighbors)
+            for neighbor in unvisited_neighbors
         )
 
     def get_possible_actions(self):
@@ -160,7 +167,7 @@ class Board(GameBase):
     def _is_end_state_get_winner(self) -> Tuple[bool, Optional[int]]:
         for player in (1, 2):
             for position in Board._board_search_start_side(player, self._size):
-                if self._is_position_occupied(position, player):
+                if self._is_position_occupied_by(position, player):
                     if self._board_search(position, player=player, visited={position}):
                         return True, player
 
@@ -214,7 +221,7 @@ class Board(GameBase):
         return tuple(
             list(
                 filter(
-                    lambda pos: self._is_position_occupied(pos, player),
+                    lambda pos: self._is_position_occupied_by(pos, player),
                     Board._get_valid_positions(self._size),
                 )
             )
@@ -228,11 +235,10 @@ class Board(GameBase):
         return self._player_turn
 
     def __eq__(self, other: Board) -> bool:
-        return (
-            self._size == other._size
-            and self._player_turn == other._player_turn
-            and self._board_state == other._board_state
-        )
+        return self.get_tuple_representation() == other.get_tuple_representation()
+
+    def __hash__(self):
+        return hash(self.get_tuple_representation())
 
     def __repr__(self):
         return f"Board<size={self._size}, board_state={self._board_state}, player_turn={self._player_turn}>"
