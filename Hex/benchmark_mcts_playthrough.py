@@ -5,7 +5,7 @@ from Hex.MCTS import MCTS
 def benchmark_mcts_hex_playthrough():
     board_size = 5
     state = Board(size=board_size)
-    mcts = MCTS(initial_state=state, search_games=2000, time_limit=1)
+    mcts = MCTS(initial_state=state, search_games=1000, time_limit=1000000)
     saps = []
     while True:
         mcts = mcts.search(lambda state: state.get_possible_actions()[0])
