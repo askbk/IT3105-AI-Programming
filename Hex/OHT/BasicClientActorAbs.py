@@ -4,6 +4,7 @@ import random
 import math
 from abc import ABC, abstractmethod
 import ast
+import json
 
 
 class BasicClientActorAbs(ABC):
@@ -15,6 +16,9 @@ class BasicClientActorAbs(ABC):
             self.IP_address = IP_address
 
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        with open("./OHT/credentials.json") as f:
+            self._credentials = json.loads(f.read())
 
         # We require a certificate from the server. We used a self-signed certificate
         # so here ca_certs must be the server certificate itself.
@@ -68,11 +72,13 @@ class BasicClientActorAbs(ABC):
 
             # We are asked to enter our NTNU username
             if "username" in msg:
-                usr_in = input(msg)
+                # usr_in = input(msg)
+                usr_in = self._credentials["username"]
 
             # We are asked to enter our NTNU password
             elif "password" in msg:
-                usr_in = getpass.getpass(msg)
+                # usr_in = getpass.getpass(msg)
+                usr_in = self._credentials["password"]
 
             # If we are successful the server will tell us and we can start a game!
             elif "Welcome" in msg:
@@ -91,7 +97,8 @@ class BasicClientActorAbs(ABC):
 
             # We are asked to enter the name we want for our player in the tournament
             elif "player-name" in msg:
-                usr_in = input(msg)
+                # usr_in = input(msg)
+                usr_in = self._credentials["nickname"]
 
             # We are asked if we want to qualify or play a test game
             elif "qualify" in msg:
