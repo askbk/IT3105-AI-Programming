@@ -7,6 +7,10 @@ class BasicClientActor(BasicClientActorAbs):
         self.series_id = -1
         BasicClientActorAbs.__init__(self, IP_address, verbose=verbose)
 
+    @staticmethod
+    def _switch_players(state):
+        return tuple(3 - pos if pos > 0 else 0 for pos in state)
+
     def handle_get_action(self, state):
         """
         Here you will use the neural net that you trained using MCTS to select a move for your actor on the current board.
@@ -17,7 +21,11 @@ class BasicClientActor(BasicClientActorAbs):
         then you will see a 2 here throughout the entire series, whereas player 1 will see a 1.
         :return: Your actor's selected action as a tuple (row, column)
         """
-
+        state = (
+            BasicClientActor._switch_players(state)
+            if self.starting_player == 2
+            else state
+        )
         # This is an example player who picks random moves. REMOVE THIS WHEN YOU ADD YOUR OWN CODE !!
         next_move = tuple(
             self.pick_random_free_cell(state, size=int(math.sqrt(len(state) - 1)))
@@ -45,6 +53,7 @@ class BasicClientActor(BasicClientActorAbs):
 
         """
         self.series_id = series_id
+        self._board_size = game_params[0]
         #############################
         #
         #
