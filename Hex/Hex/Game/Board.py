@@ -88,9 +88,9 @@ class Board(GameBase):
     @cache
     def _board_search_start_side(player: int, board_size: int):
         if player == 1:
-            return list(product(range(board_size), [0]))
-        if player == 2:
             return list(product([0], range(board_size)))
+        if player == 2:
+            return list(product(range(board_size), [0]))
 
         raise ValueError("Invalid player")
 
@@ -98,9 +98,9 @@ class Board(GameBase):
     @cache
     def _board_search_end_side(player: int, board_size: int):
         if player == 1:
-            return list(product(range(board_size), [board_size - 1]))
-        if player == 2:
             return list(product([board_size - 1], range(board_size)))
+        if player == 2:
+            return list(product(range(board_size), [board_size - 1]))
 
         raise ValueError("Invalid player")
 

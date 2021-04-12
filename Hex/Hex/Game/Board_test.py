@@ -76,7 +76,7 @@ def test_win_condition():
 
     assert Board().is_finished() == (False, None)
 
-    moves = [(2, 0), (2, 2), (2, 1), (3, 1), (1, 2), (1, 3), (0, 3)]
+    moves = [(0, 2), (2, 2), (1, 2), (1, 3), (2, 1), (3, 1), (3, 0)]
     assert (
         reduce(
             lambda board, move: board.perform_action(move),
