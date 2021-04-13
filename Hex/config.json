@@ -1,19 +1,21 @@
 {
   "board_size": 3,
-  "epsilon": 0.1,
+  "epsilon": 0.2,
   "mcts": {
     "search_games": 2000,
-    "exploration_coefficient": 3,
-    "time_limit": 0.5
+    "exploration_coefficient": 2,
+    "time_limit": 1
   },
   "actor": {
-    "learning_rate": 0.01,
+    "learning_rate": 0.001,
     "optimizer": "adam",
     "output_activation": "sigmoid",
     "loss": "categorical_crossentropy",
     "layers": [
-      { "units": 30, "activation": "relu" },
-      { "units": 20, "activation": "relu" }
+      { "units": 100, "activation": "relu" },
+      { "units": 50, "activation": "relu" },
+      { "units": 50, "activation": "relu" },
+      { "units": 25, "activation": "relu" }
     ]
   }
 }
