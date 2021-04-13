@@ -96,4 +96,5 @@ class Agent:
         return Agent(
             initial_state=initial_state,
             _actor=self._actor.train(training_subset),
+            _replay_buffer=self._replay_buffer,
         )

@@ -55,15 +55,18 @@ class Player:
         episode_count: int = 1,
         display_board: bool = True,
         time_interval: float = 1,
+        silent=False,
     ):
         def reduce_func(
             agent: AgentBase, episode_number: int
         ) -> Union[Sequence[GameBase], AgentBase]:
-            print(f"Episode {episode_number+1}/{episode_count}")
+            if not silent:
+                print(f"Episode {episode_number+1}/{episode_count}")
             board_sequence, updated_agent = Player._play_single_episode(
                 self._game, agent
             )
             if episode_number == episode_count - 1:
+                self._agent = updated_agent
                 return board_sequence
 
             return updated_agent
