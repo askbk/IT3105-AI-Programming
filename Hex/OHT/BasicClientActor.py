@@ -2,12 +2,14 @@ import math
 from OHT.BasicClientActorAbs import BasicClientActorAbs
 from Hex.Game import Board
 from Hex.MCTS import MCTS
+from Hex.GreedyNNAgent import GreedyNNAgent
 
 
 class BasicClientActor(BasicClientActorAbs):
     def __init__(self, IP_address=None, verbose=True):
         self.series_id = -1
         BasicClientActorAbs.__init__(self, IP_address, verbose=verbose)
+        self._actor = None
 
     def handle_get_action(self, state):
         """
@@ -21,11 +23,11 @@ class BasicClientActor(BasicClientActorAbs):
         """
 
         board = Board.from_tuple_representation(state)
-        if board != self._mcts._tree.get_state():
-            self._mcts = self._mcts.update_root(board).search()
+        if board != self._agent._initial_state:
+            self._agent = self._agent.next_state(board)
 
-        next_move = self._mcts.get_best_action()
-        self._mcts = self._mcts.update_root(board.perform_action(next_move)).search()
+        next_move = self._agent.get_action()
+        self._agent = self._agent.next_state(board.perform_action(next_move))
         # This is an example player who picks random moves. REMOVE THIS WHEN YOU ADD YOUR OWN CODE !!
         # next_move = tuple(
         #     self.pick_random_free_cell(state, size=int(math.sqrt(len(state) - 1)))
@@ -68,10 +70,10 @@ class BasicClientActor(BasicClientActorAbs):
         :return
         """
         self.starting_player = start_player
-        self._mcts = MCTS.from_config(
-            {"search_games": 2000, "exploration_coefficient": 3, "time_limit": 0.1},
-            initial_state=Board(size=self._board_size, _player_turn=start_player),
-        ).search()
+        self._agent = GreedyNNAgent.from_saved_nn(
+            f"./models/size_{self._board_size}",
+            Board(size=self._board_size, _player_turn=start_player),
+        )
         #############################
         #
         #
