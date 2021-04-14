@@ -22,7 +22,10 @@ def train_progressive_policies(
     player.save_agent_nn(f"./models/TOPP/{game._size}/0")
     paths.append(f"./models/TOPP/{game._size}/0")
     for episode in range(save_interval, episodes + 1, save_interval):
-        player.play_episodes(episode_count=save_interval, display_board=False)
+        print(f"{episode}/{episodes}")
+        player.play_episodes(
+            episode_count=save_interval, display_board=False, silent=True
+        )
         player.save_agent_nn(f"./models/TOPP/{game._size}/{episode}")
         paths.append(f"./models/TOPP/{game._size}/{episode}")
 
