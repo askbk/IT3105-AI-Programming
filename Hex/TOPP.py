@@ -19,12 +19,12 @@ def train_progressive_policies(
     """
     paths = []
     player = Player.from_config_path("./config.json", game)
-    player.save_agent_nn(f"./models/{game._size}/0")
-    paths.append(f"./models/{game._size}/0")
+    player.save_agent_nn(f"./models/TOPP/{game._size}/0")
+    paths.append(f"./models/TOPP/{game._size}/0")
     for episode in range(save_interval, episodes + 1, save_interval):
         player.play_episodes(episode_count=save_interval, display_board=False)
-        player.save_agent_nn(f"./models/{game._size}/{episode}")
-        paths.append(f"./models/{game._size}/{episode}")
+        player.save_agent_nn(f"./models/TOPP/{game._size}/{episode}")
+        paths.append(f"./models/TOPP/{game._size}/{episode}")
 
     return paths
 
@@ -127,8 +127,21 @@ def train_and_play_tournament(
 
 
 if __name__ == "__main__":
-    game = Board(size=5)
+    game = Board(size=4)
     # game = Nim(n=5, k=2)
     train_and_play_tournament(
         episodes=200, save_interval=50, games_per_series=11, game=game
     )
+    # play_tournament(
+    #     [
+    #         GreedyNNAgent.from_saved_nn(path, game)
+    #         for path in [
+    #             "./models/size_5",
+    #             "./models/5/0",
+    #             "./models/5/50",
+    #             "./models/5/100",
+    #         ]
+    #     ],
+    #     games_per_pair=11,
+    #     game=game,
+    # )
