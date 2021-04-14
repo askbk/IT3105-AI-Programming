@@ -22,14 +22,15 @@
     ]
   },
   "TOPP": {
-    "series_games": 11,
+    "games_per_series": 9,
     "training_episodes": 200,
     "save_interval": 50,
-    "board_size": 5
+    "board_size": 3
   },
   "simple_playthrough": {
     "board_size": 3,
     "episodes": 5,
-    "display_playthrough": false
+    "display_board": true,
+    "time_interval": 2
   }
 }

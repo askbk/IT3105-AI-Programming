@@ -1,8 +1,8 @@
 import random
+import json
 from operator import itemgetter
 from typing import Sequence, Tuple
 from functools import reduce
-from Hex.MCTS.Nim import Nim
 from Hex.Player import Player
 from Hex.Game import Board, GameBase
 from Hex.AgentBase import AgentBase
@@ -127,7 +127,11 @@ def train_and_play_tournament(
 
 
 if __name__ == "__main__":
-    game = Board(size=4)
+    with open("./config.json", mode="r") as f:
+        config = json.loads(f.read()).get("TOPP", {})
     train_and_play_tournament(
-        episodes=200, save_interval=50, games_per_series=11, game=game
+        episodes=config.get("training_episodes", 200),
+        save_interval=config.get("save_interval", 50),
+        games_per_series=config.get("games_per_series", 9),
+        game=Board(size=config.get("board_size", 4)),
     )
