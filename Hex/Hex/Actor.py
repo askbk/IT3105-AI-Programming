@@ -84,7 +84,7 @@ class Actor:
             )
         return self._nn(tf.convert_to_tensor(x)).numpy().flatten()
 
-    def train(self, replay_buffer: ReplayBuffer) -> Actor:
+    def train(self, replay_buffer: ReplayBuffer, train_config=None) -> Actor:
         root_states, probability_distributions = zip(*replay_buffer)
         x = np.atleast_2d(np.array(root_states))
         y = np.atleast_2d(np.array(probability_distributions))
@@ -94,6 +94,9 @@ class Actor:
         if y.shape[1] != self._output_size:
             raise ValueError(f"Output vectors must have length {self._output_size}")
 
-        self._nn.train_on_batch(x=x, y=y)
+        if train_config is None:
+            self._nn.train_on_batch(x=x, y=y)
+        else:
+            self._nn.fit(x=x, y=y, **train_config)
 
         return self
