@@ -47,10 +47,12 @@ class MCTS:
         player_turn: int, parent: Tree, exploration_coefficient=3.0
     ) -> Callable[[Tree], float]:
         value_multiplier = 1 if player_turn == 1 else -1
-        return lambda child: value_multiplier * child.get_value() / (
-            0.01 + child.get_visit_count()
-        ) + exploration_coefficient * math.sqrt(
-            math.log(parent.get_visit_count()) / (0.01 + child.get_visit_count())
+        return (
+            lambda child: value_multiplier * child.get_value()
+            + exploration_coefficient
+            * math.sqrt(
+                math.log(parent.get_visit_count()) / (0.01 + child.get_visit_count())
+            )
         )
 
     @staticmethod
