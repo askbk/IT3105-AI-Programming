@@ -1,7 +1,7 @@
 {
   "mcts": {
-    "search_games": 500,
-    "exploration_coefficient": 2,
+    "search_games": 1000,
+    "exploration_coefficient": 1,
     "time_limit": 1
   },
   "agent": {
@@ -10,13 +10,12 @@
     "minibatch_size": 32
   },
   "actor": {
-    "learning_rate": 0.01,
+    "learning_rate": 0.001,
     "optimizer": "adam",
     "output_activation": "softmax",
     "loss": "categorical_crossentropy",
     "layers": [
       { "units": 100, "activation": "relu" },
-      { "units": 50, "activation": "relu" },
       { "units": 50, "activation": "relu" },
       { "units": 25, "activation": "relu" }
     ]
@@ -25,7 +24,7 @@
     "games_per_series": 9,
     "training_episodes": 200,
     "save_interval": 50,
-    "board_size": 3
+    "board_size": 4
   },
   "simple_playthrough": {
     "board_size": 3,
