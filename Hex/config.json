@@ -1,15 +1,18 @@
 {
-  "board_size": 3,
-  "epsilon": 0.2,
   "mcts": {
-    "search_games": 2000,
+    "search_games": 500,
     "exploration_coefficient": 2,
     "time_limit": 1
   },
+  "agent": {
+    "epsilon": 0.2,
+    "replay_buffer_size": 100,
+    "minibatch_size": 32
+  },
   "actor": {
-    "learning_rate": 0.001,
+    "learning_rate": 0.01,
     "optimizer": "adam",
-    "output_activation": "sigmoid",
+    "output_activation": "softmax",
     "loss": "categorical_crossentropy",
     "layers": [
       { "units": 100, "activation": "relu" },
@@ -17,5 +20,16 @@
       { "units": 50, "activation": "relu" },
       { "units": 25, "activation": "relu" }
     ]
+  },
+  "TOPP": {
+    "series_games": 11,
+    "training_episodes": 200,
+    "save_interval": 50,
+    "board_size": 5
+  },
+  "simple_playthrough": {
+    "board_size": 3,
+    "episodes": 5,
+    "display_playthrough": false
   }
 }

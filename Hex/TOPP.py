@@ -128,20 +128,6 @@ def train_and_play_tournament(
 
 if __name__ == "__main__":
     game = Board(size=4)
-    # game = Nim(n=5, k=2)
     train_and_play_tournament(
         episodes=200, save_interval=50, games_per_series=11, game=game
     )
-    # play_tournament(
-    #     [
-    #         GreedyNNAgent.from_saved_nn(path, game)
-    #         for path in [
-    #             "./models/size_5",
-    #             "./models/5/0",
-    #             "./models/5/50",
-    #             "./models/5/100",
-    #         ]
-    #     ],
-    #     games_per_pair=11,
-    #     game=game,
-    # )

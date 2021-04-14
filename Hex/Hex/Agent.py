@@ -14,15 +14,21 @@ class Agent:
         self,
         initial_state: GameBase,
         epsilon: float = 0,
+        replay_buffer_size: int = 100,
+        minibatch_size: int = 32,
         _replay_buffer: Optional[ReplayBuffer] = None,
         _actor: Actor = None,
         _mcts: Optional[MCTS] = None,
     ):
-        self._replay_buffer = [] if _replay_buffer is None else _replay_buffer
+        self._replay_buffer = (
+            [] if _replay_buffer is None else _replay_buffer[-replay_buffer_size:]
+        )
+        self._replay_buffer_size = replay_buffer_size
         self._actor = _actor
         self._epsilon = epsilon
         self._mcts = Agent._initialize_mcts(initial_state, _mcts)
         self._initial_state = initial_state
+        self._minibatch_size = minibatch_size
 
     @staticmethod
     def _initialize_mcts(initial_state: GameBase, mcts: MCTS) -> Optional[MCTS]:
@@ -35,7 +41,7 @@ class Agent:
     def from_config(config: Dict, game: GameBase) -> Agent:
         return Agent(
             initial_state=game,
-            epsilon=config.get("epsilon", 0),
+            **config.get("agent", {}),
             _actor=Actor.from_config(
                 input_size=game.get_state_size(),
                 output_size=game.get_action_space_size(),
@@ -88,13 +94,19 @@ class Agent:
                 rollout_policy=Agent._rollout_policy(self._actor)
             ),
             _actor=self._actor,
+            minibatch_size=self._minibatch_size,
+            epsilon=self._epsilon,
+            replay_buffer_size=self._replay_buffer_size,
         )
 
     def end_of_episode_update(self, initial_state: GameBase) -> Agent:
-        subset_size = min(len(self._replay_buffer), 100)
+        subset_size = min(len(self._replay_buffer), self._minibatch_size)
         training_subset = random.sample(self._replay_buffer, subset_size)
         return Agent(
             initial_state=initial_state,
+            epsilon=self._epsilon,
+            replay_buffer_size=self._replay_buffer_size,
+            minibatch_size=self._minibatch_size,
             _actor=self._actor.train(training_subset),
             _replay_buffer=self._replay_buffer,
         )
