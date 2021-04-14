@@ -77,20 +77,10 @@ class Board(GameBase):
         return board_size * coordinates[0] + coordinates[1]
 
     def _is_position_occupied_by(self, position: Position, player: int):
-        return (
-            self._board_state[
-                Board._translate_coordinates_to_index(position, self._size)
-            ]
-            == player
-        )
+        return self._board_state[self.action_to_index(position)] == player
 
     def _is_position_occupied(self, position: Position) -> bool:
-        return (
-            self._board_state[
-                Board._translate_coordinates_to_index(position, self._size)
-            ]
-            != 0
-        )
+        return self._board_state[self.action_to_index(position)] != 0
 
     def _add_occupant(self, position: Position):
         index = Board._translate_coordinates_to_index(position, self._size)
