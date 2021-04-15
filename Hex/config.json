@@ -21,7 +21,7 @@
     ]
   },
   "TOPP": {
-    "games_per_series": 9,
+    "games_per_series": 13,
     "training_episodes": 200,
     "save_interval": 50,
     "board_size": 4

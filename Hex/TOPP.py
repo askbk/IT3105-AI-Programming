@@ -119,12 +119,16 @@ def play_tournament(agents: Sequence[AgentBase], games_per_pair: int, game: Game
     print("Sorted by series won:", *sorted_by_series, sep="\n")
 
 
+def load_greedy_agents_from_saved(paths, game):
+    return [GreedyNNAgent.from_saved_nn(path, game) for path in paths]
+
+
 def train_and_play_tournament(
     episodes: int, save_interval: int, games_per_series: int, game: GameBase
 ):
     saved_nn_paths = train_progressive_policies(episodes, save_interval, game)
 
-    agents = [GreedyNNAgent.from_saved_nn(path, game) for path in saved_nn_paths]
+    agents = load_greedy_agents_from_saved(saved_nn_paths, game)
 
     play_tournament(agents, games_per_series, game)
 
@@ -132,9 +136,24 @@ def train_and_play_tournament(
 if __name__ == "__main__":
     with open("./config.json", mode="r") as f:
         config = json.loads(f.read()).get("TOPP", {})
-    train_and_play_tournament(
-        episodes=config.get("training_episodes", 200),
-        save_interval=config.get("save_interval", 50),
-        games_per_series=config.get("games_per_series", 9),
-        game=Board(size=config.get("board_size", 4)),
+    game = Board(size=config.get("board_size", 4))
+    play_tournament(
+        load_greedy_agents_from_saved(
+            [
+                "./models/TOPP/4/0",
+                "./models/TOPP/4/50",
+                "./models/TOPP/4/100",
+                "./models/TOPP/4/150",
+                "./models/TOPP/4/200",
+            ],
+            game,
+        ),
+        config.get("games_per_series", 9),
+        game,
     )
+    # train_and_play_tournament(
+    #     episodes=config.get("training_episodes", 200),
+    #     save_interval=config.get("save_interval", 50),
+    #     games_per_series=config.get("games_per_series", 9),
+    #     game=Board(size=config.get("board_size", 4)),
+    # )
