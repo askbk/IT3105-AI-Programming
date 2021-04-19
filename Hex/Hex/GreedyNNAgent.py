@@ -36,6 +36,10 @@ class GreedyNNAgent(AgentBase):
             _actor=actor,
         )
 
+    @staticmethod
+    def from_agent(game, agent):
+        return GreedyNNAgent(Agent._rollout_policy(agent._actor), game, "greedy agent")
+
     def get_action(self) -> Action:
         return self._policy(self._initial_state)
 
