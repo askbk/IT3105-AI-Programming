@@ -28,7 +28,7 @@ class Actor:
             optimizer=Actor._initialize_optimizer(
                 name=optimizer, learning_rate=learning_rate
             ),
-            loss=loss,
+            loss=keras.losses.kl_divergence if loss == "kl_divergence" else loss,
         )
 
     @staticmethod
